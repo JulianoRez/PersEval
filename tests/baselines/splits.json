@@ -1,0 +1,894 @@
+{
+  "BREXIT": {
+    "adaptation=False|extended=False|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 2,
+        "n_users": 2,
+        "traits_digest": "4629575fd5249a9b"
+      },
+      "train": {
+        "digest": "cf126fd48c24ad25",
+        "n_annotations": 3200,
+        "n_texts": 800,
+        "n_traits": 4,
+        "n_users": 4,
+        "traits_digest": "3465912e47a3b2f9"
+      }
+    },
+    "adaptation=False|extended=True|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 2,
+        "n_users": 2,
+        "traits_digest": "4629575fd5249a9b"
+      },
+      "train": {
+        "digest": "f4ae7e3e755f1aca",
+        "n_annotations": 4480,
+        "n_texts": 1120,
+        "n_traits": 4,
+        "n_users": 4,
+        "traits_digest": "3465912e47a3b2f9"
+      }
+    },
+    "adaptation=test|extended=False|named=False": {
+      "adaptation": {
+        "digest": "cf45e3b386b3f7b1",
+        "n_annotations": 32,
+        "n_texts": 16,
+        "n_traits": 0,
+        "n_users": 2,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 0,
+        "n_users": 2,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "cf126fd48c24ad25",
+        "n_annotations": 3200,
+        "n_texts": 800,
+        "n_traits": 0,
+        "n_users": 4,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=test|extended=False|named=True": {
+      "adaptation": {
+        "digest": "cf45e3b386b3f7b1",
+        "n_annotations": 32,
+        "n_texts": 16,
+        "n_traits": 2,
+        "n_users": 2,
+        "traits_digest": "4629575fd5249a9b"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 2,
+        "n_users": 2,
+        "traits_digest": "4629575fd5249a9b"
+      },
+      "train": {
+        "digest": "cf126fd48c24ad25",
+        "n_annotations": 3200,
+        "n_texts": 800,
+        "n_traits": 4,
+        "n_users": 4,
+        "traits_digest": "3465912e47a3b2f9"
+      }
+    },
+    "adaptation=test|extended=True|named=False": {
+      "adaptation": {
+        "digest": "cf45e3b386b3f7b1",
+        "n_annotations": 32,
+        "n_texts": 16,
+        "n_traits": 0,
+        "n_users": 2,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 0,
+        "n_users": 2,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "f4ae7e3e755f1aca",
+        "n_annotations": 4480,
+        "n_texts": 1120,
+        "n_traits": 0,
+        "n_users": 4,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=test|extended=True|named=True": {
+      "adaptation": {
+        "digest": "cf45e3b386b3f7b1",
+        "n_annotations": 32,
+        "n_texts": 16,
+        "n_traits": 2,
+        "n_users": 2,
+        "traits_digest": "4629575fd5249a9b"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 2,
+        "n_users": 2,
+        "traits_digest": "4629575fd5249a9b"
+      },
+      "train": {
+        "digest": "f4ae7e3e755f1aca",
+        "n_annotations": 4480,
+        "n_texts": 1120,
+        "n_traits": 4,
+        "n_users": 4,
+        "traits_digest": "3465912e47a3b2f9"
+      }
+    },
+    "adaptation=train|extended=False|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 0,
+        "n_users": 2,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "514db5ae8e78cc7a",
+        "n_annotations": 3232,
+        "n_texts": 800,
+        "n_traits": 0,
+        "n_users": 6,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=train|extended=False|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 2,
+        "n_users": 2,
+        "traits_digest": "4629575fd5249a9b"
+      },
+      "train": {
+        "digest": "514db5ae8e78cc7a",
+        "n_annotations": 3232,
+        "n_texts": 800,
+        "n_traits": 6,
+        "n_users": 6,
+        "traits_digest": "b6edfddcbc3af752"
+      }
+    },
+    "adaptation=train|extended=True|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 0,
+        "n_users": 2,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "a8fa09f4a640c20b",
+        "n_annotations": 4512,
+        "n_texts": 1120,
+        "n_traits": 0,
+        "n_users": 6,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=train|extended=True|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a7fbb3eac971a205",
+        "n_annotations": 640,
+        "n_texts": 320,
+        "n_traits": 2,
+        "n_users": 2,
+        "traits_digest": "4629575fd5249a9b"
+      },
+      "train": {
+        "digest": "a8fa09f4a640c20b",
+        "n_annotations": 4512,
+        "n_texts": 1120,
+        "n_traits": 6,
+        "n_users": 6,
+        "traits_digest": "b6edfddcbc3af752"
+      }
+    }
+  },
+  "DICES": {
+    "adaptation=False|extended=False|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 96,
+        "n_users": 24,
+        "traits_digest": "07d57935a7f7a2c1"
+      },
+      "train": {
+        "digest": "939c0f28c0743b02",
+        "n_annotations": 23760,
+        "n_texts": 240,
+        "n_traits": 396,
+        "n_users": 99,
+        "traits_digest": "b1c34cc887573e81"
+      }
+    },
+    "adaptation=False|extended=True|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 96,
+        "n_users": 24,
+        "traits_digest": "07d57935a7f7a2c1"
+      },
+      "train": {
+        "digest": "572e39ba3160ee1f",
+        "n_annotations": 34650,
+        "n_texts": 350,
+        "n_traits": 396,
+        "n_users": 99,
+        "traits_digest": "b1c34cc887573e81"
+      }
+    },
+    "adaptation=test|extended=False|named=False": {
+      "adaptation": {
+        "digest": "ea459add17df4157",
+        "n_annotations": 5760,
+        "n_texts": 240,
+        "n_traits": 0,
+        "n_users": 24,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 0,
+        "n_users": 24,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "939c0f28c0743b02",
+        "n_annotations": 23760,
+        "n_texts": 240,
+        "n_traits": 0,
+        "n_users": 99,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=test|extended=False|named=True": {
+      "adaptation": {
+        "digest": "ea459add17df4157",
+        "n_annotations": 5760,
+        "n_texts": 240,
+        "n_traits": 96,
+        "n_users": 24,
+        "traits_digest": "07d57935a7f7a2c1"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 96,
+        "n_users": 24,
+        "traits_digest": "07d57935a7f7a2c1"
+      },
+      "train": {
+        "digest": "939c0f28c0743b02",
+        "n_annotations": 23760,
+        "n_texts": 240,
+        "n_traits": 396,
+        "n_users": 99,
+        "traits_digest": "b1c34cc887573e81"
+      }
+    },
+    "adaptation=test|extended=True|named=False": {
+      "adaptation": {
+        "digest": "ea459add17df4157",
+        "n_annotations": 5760,
+        "n_texts": 240,
+        "n_traits": 0,
+        "n_users": 24,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 0,
+        "n_users": 24,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "572e39ba3160ee1f",
+        "n_annotations": 34650,
+        "n_texts": 350,
+        "n_traits": 0,
+        "n_users": 99,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=test|extended=True|named=True": {
+      "adaptation": {
+        "digest": "ea459add17df4157",
+        "n_annotations": 5760,
+        "n_texts": 240,
+        "n_traits": 96,
+        "n_users": 24,
+        "traits_digest": "07d57935a7f7a2c1"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 96,
+        "n_users": 24,
+        "traits_digest": "07d57935a7f7a2c1"
+      },
+      "train": {
+        "digest": "572e39ba3160ee1f",
+        "n_annotations": 34650,
+        "n_texts": 350,
+        "n_traits": 396,
+        "n_users": 99,
+        "traits_digest": "b1c34cc887573e81"
+      }
+    },
+    "adaptation=train|extended=False|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 0,
+        "n_users": 24,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "47ec54df3320109d",
+        "n_annotations": 29520,
+        "n_texts": 240,
+        "n_traits": 0,
+        "n_users": 123,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=train|extended=False|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 96,
+        "n_users": 24,
+        "traits_digest": "07d57935a7f7a2c1"
+      },
+      "train": {
+        "digest": "47ec54df3320109d",
+        "n_annotations": 29520,
+        "n_texts": 240,
+        "n_traits": 492,
+        "n_users": 123,
+        "traits_digest": "73a28cde60b4bda0"
+      }
+    },
+    "adaptation=train|extended=True|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 0,
+        "n_users": 24,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "9e355df3d70922eb",
+        "n_annotations": 40410,
+        "n_texts": 350,
+        "n_traits": 0,
+        "n_users": 123,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=train|extended=True|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "cc90f2e2e0984605",
+        "n_annotations": 2640,
+        "n_texts": 110,
+        "n_traits": 96,
+        "n_users": 24,
+        "traits_digest": "07d57935a7f7a2c1"
+      },
+      "train": {
+        "digest": "9e355df3d70922eb",
+        "n_annotations": 40410,
+        "n_texts": 350,
+        "n_traits": 492,
+        "n_users": 123,
+        "traits_digest": "73a28cde60b4bda0"
+      }
+    }
+  },
+  "EPIC": {
+    "adaptation=False|extended=False|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 42,
+        "n_users": 14,
+        "traits_digest": "092f0adc8b54b6a4"
+      },
+      "train": {
+        "digest": "ee5e93a736a47014",
+        "n_annotations": 5092,
+        "n_texts": 1161,
+        "n_traits": 180,
+        "n_users": 60,
+        "traits_digest": "bda3951780e62b95"
+      }
+    },
+    "adaptation=False|extended=True|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 42,
+        "n_users": 14,
+        "traits_digest": "092f0adc8b54b6a4"
+      },
+      "train": {
+        "digest": "ae148a5fff8d018c",
+        "n_annotations": 11404,
+        "n_texts": 2998,
+        "n_traits": 180,
+        "n_users": 60,
+        "traits_digest": "bda3951780e62b95"
+      }
+    },
+    "adaptation=test|extended=False|named=False": {
+      "adaptation": {
+        "digest": "d13484b3baf13c07",
+        "n_annotations": 224,
+        "n_texts": 133,
+        "n_traits": 0,
+        "n_users": 14,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 0,
+        "n_users": 14,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "ee5e93a736a47014",
+        "n_annotations": 5092,
+        "n_texts": 1161,
+        "n_traits": 0,
+        "n_users": 60,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=test|extended=False|named=True": {
+      "adaptation": {
+        "digest": "d13484b3baf13c07",
+        "n_annotations": 224,
+        "n_texts": 133,
+        "n_traits": 42,
+        "n_users": 14,
+        "traits_digest": "092f0adc8b54b6a4"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 42,
+        "n_users": 14,
+        "traits_digest": "092f0adc8b54b6a4"
+      },
+      "train": {
+        "digest": "ee5e93a736a47014",
+        "n_annotations": 5092,
+        "n_texts": 1161,
+        "n_traits": 180,
+        "n_users": 60,
+        "traits_digest": "bda3951780e62b95"
+      }
+    },
+    "adaptation=test|extended=True|named=False": {
+      "adaptation": {
+        "digest": "d13484b3baf13c07",
+        "n_annotations": 224,
+        "n_texts": 133,
+        "n_traits": 0,
+        "n_users": 14,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 0,
+        "n_users": 14,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "ae148a5fff8d018c",
+        "n_annotations": 11404,
+        "n_texts": 2998,
+        "n_traits": 0,
+        "n_users": 60,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=test|extended=True|named=True": {
+      "adaptation": {
+        "digest": "d13484b3baf13c07",
+        "n_annotations": 224,
+        "n_texts": 133,
+        "n_traits": 42,
+        "n_users": 14,
+        "traits_digest": "092f0adc8b54b6a4"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 42,
+        "n_users": 14,
+        "traits_digest": "092f0adc8b54b6a4"
+      },
+      "train": {
+        "digest": "ae148a5fff8d018c",
+        "n_annotations": 11404,
+        "n_texts": 2998,
+        "n_traits": 180,
+        "n_users": 60,
+        "traits_digest": "bda3951780e62b95"
+      }
+    },
+    "adaptation=train|extended=False|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 0,
+        "n_users": 14,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "4789d602c17916f3",
+        "n_annotations": 5316,
+        "n_texts": 1161,
+        "n_traits": 0,
+        "n_users": 74,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=train|extended=False|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 42,
+        "n_users": 14,
+        "traits_digest": "092f0adc8b54b6a4"
+      },
+      "train": {
+        "digest": "4789d602c17916f3",
+        "n_annotations": 5316,
+        "n_texts": 1161,
+        "n_traits": 222,
+        "n_users": 74,
+        "traits_digest": "f379a6232c29f2f9"
+      }
+    },
+    "adaptation=train|extended=True|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 0,
+        "n_users": 14,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "fd96adbab001b132",
+        "n_annotations": 11628,
+        "n_texts": 2998,
+        "n_traits": 0,
+        "n_users": 74,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=train|extended=True|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "1f7766375ec3e303",
+        "n_annotations": 2544,
+        "n_texts": 1839,
+        "n_traits": 42,
+        "n_users": 14,
+        "traits_digest": "092f0adc8b54b6a4"
+      },
+      "train": {
+        "digest": "fd96adbab001b132",
+        "n_annotations": 11628,
+        "n_texts": 2998,
+        "n_traits": 222,
+        "n_users": 74,
+        "traits_digest": "f379a6232c29f2f9"
+      }
+    }
+  },
+  "MD": {
+    "adaptation=test|extended=False|named=False": {
+      "adaptation": {
+        "digest": "3e88472a38ec8547",
+        "n_annotations": 981,
+        "n_texts": 553,
+        "n_traits": 0,
+        "n_users": 163,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a71d41a979dc6027",
+        "n_annotations": 10283,
+        "n_texts": 7126,
+        "n_traits": 0,
+        "n_users": 163,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "3c5eb6e59c771606",
+        "n_annotations": 17154,
+        "n_texts": 3627,
+        "n_traits": 0,
+        "n_users": 656,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=test|extended=True|named=False": {
+      "adaptation": {
+        "digest": "3e88472a38ec8547",
+        "n_annotations": 981,
+        "n_texts": 553,
+        "n_traits": 0,
+        "n_users": 163,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a71d41a979dc6027",
+        "n_annotations": 10283,
+        "n_texts": 7126,
+        "n_traits": 0,
+        "n_users": 163,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "33ca651b054c1509",
+        "n_annotations": 42500,
+        "n_texts": 10753,
+        "n_traits": 0,
+        "n_users": 656,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=train|extended=False|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a71d41a979dc6027",
+        "n_annotations": 10283,
+        "n_texts": 7126,
+        "n_traits": 0,
+        "n_users": 163,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "fa4d9d080679ca76",
+        "n_annotations": 18135,
+        "n_texts": 3627,
+        "n_traits": 0,
+        "n_users": 819,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    },
+    "adaptation=train|extended=True|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "a71d41a979dc6027",
+        "n_annotations": 10283,
+        "n_texts": 7126,
+        "n_traits": 0,
+        "n_users": 163,
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "9356ac10838ed227",
+        "n_annotations": 43481,
+        "n_texts": 10753,
+        "n_traits": 0,
+        "n_users": 819,
+        "traits_digest": "1f18d650d205d71d"
+      }
+    }
+  }
+}
