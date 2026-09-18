@@ -1,8 +1,10 @@
 from perseval.data import *
-from perseval.model import *
 from perseval.evaluation import *
+from perseval.baselines.encoder import PerspectivistEncoder
+from perseval.baselines.llm import PerspectivistLLM
+from perseval.baselines.lamp import PerspectivistLaMP
 from transformers.utils import logging
-from perseval.prompts import EPIC, BREXIT, MHS_prompts, DICES_prompts, MD_Agreement
+from perseval.baselines.prompts import EPIC, BREXIT, MHS_prompts, DICES_prompts, MD_Agreement
 import argparse
 import glob
 

@@ -1,9 +1,7 @@
 import json
-
-from perseval.prompts import text_context_template, text_only_template
-
-
-    
+from pathlib import Path
+from .. import config
+from .prompts import text_context_template, text_only_template    
 
 class PrepareData ():
     def __init__(self, persp_dataset, dataset_config, named=False, context=False):
@@ -12,6 +10,9 @@ class PrepareData ():
         self.test_split = persp_dataset.test_set
         self.dataset_config = dataset_config
         self.dataset_name = self.dataset_config["dataset_name"]
+
+        output_dir = Path(config.data_lamp_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
 
         if context: 
             self.template = text_context_template
@@ -93,8 +94,8 @@ class PrepareData ():
                     
             # After collecting data for all users and traits, save the results for each trait
             for trait, input_data in trait_input_data.items():
-                output_file = f"./data_LaMP/{self.dataset_name}_{trait}_{named}_input.json"
-                with open(output_file, "w") as outfile:
+                output_file = output_dir / f"{self.dataset_name}_{trait}_{named}_input.json"
+                with output_file.open("w", encoding="utf-8") as outfile:
                     json.dump(input_data, outfile, indent=4)
             
             print("instances test set: ",len(list_ids)//len(set(list_traits)))
@@ -195,9 +196,8 @@ class PrepareData ():
             prompt = generate_prompt()
             input_data = generate_input_data_unnamed(prompt=prompt)
             
-            with open(f"./data_LaMP/{self.dataset_name}_{named}_input.json", "w") as outfile: 
+            with (output_dir / f"{self.dataset_name}_{named}_input.json").open("w", encoding="utf-8") as outfile:
                 json.dump(input_data, outfile)
-
 
 
         #create output file
@@ -213,5 +213,6 @@ class PrepareData ():
                     "id":str(t),
                     k:v
                 })
-        with open(f"./data_LaMP/{self.dataset_name}_{named}_output.json", "w") as outfile: 
+                
+        with (output_dir / f"{self.dataset_name}_{named}_output.json").open("w", encoding="utf-8") as outfile:
             json.dump(output_data, outfile)

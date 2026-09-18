@@ -10,6 +10,24 @@ from sklearn.model_selection import train_test_split
 
 from . import config
 
+import os
+from pathlib import Path
+
+def local_dataset_path(relative_path):
+    root = os.environ.get("PERSEVAL_DATA_DIR") # PERSEVAL_DATA_DIR as an env var 
+
+    if not root:
+        raise FileNotFoundError(
+            "Set PERSEVAL_DATA_DIR to the folder containing the local datasets."
+        )
+
+    path = Path(root).expanduser() / relative_path
+
+    if not path.exists():
+        raise FileNotFoundError(f"Dataset not found: {path}")
+
+    return str(path)
+
 log.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
     encoding='utf-8', 
@@ -494,7 +512,7 @@ class DICES(PerspectivistDataset):
         super(DICES, self).__init__()
         self.name = "DICES"
         self.label = label
-        self.dataset = load_from_disk("data/diverse_safety_adversarial_dialog_350_enhanced")
+        self.dataset = load_from_disk(local_dataset_path("diverse_safety_adversarial_dialog_350_enhanced"))
         self.dataset = self.dataset.map(lambda x: {label: config.label_map[label][x[label]]})
         self.labels[label] = set()
 
@@ -851,7 +869,7 @@ class MD(PerspectivistDataset):
         super(MD, self).__init__()
         self.name = "MD"
         self.label = label
-        dataset = load_dataset("csv", data_files="data/MD-Agreement_dataset/MD_agreement.csv")
+        dataset = load_dataset("csv", data_files=local_dataset_path("MD-Agreement_dataset/MD_agreement.csv"))
         self.dataset = dataset["train"]
         self.labels[label] = set()
 

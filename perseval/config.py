@@ -1,3 +1,15 @@
+import os
+from pathlib import Path
+
+output_root = Path(
+    os.environ.get("PERSEVAL_OUTPUT_DIR", "./outputs")
+).expanduser()
+
+prediction_dir = str(output_root / "predictions")
+prediction_dir_llama = str(output_root / "predictions_llama")
+prediction_dir_mixtral = str(output_root / "predictions_mixtral")
+data_lamp_dir = str(output_root / "data_LaMP")
+
 seed = 42
 
 dataset_specific_splits = {
@@ -21,22 +33,6 @@ dataset_specific_splits = {
     "MD":{
         "user_based_split_percentage" : 0.2,
         "text_based_split_percentage" : 0.05,  
-    }
-}
-
-model_config = {
-    "roberta-base": {
-        "output_dir": "./checkpoints",
-        "num_train_epochs": 5,
-        "learning_rate": 5e-6,
-        "per_device_train_batch_size": 32,
-        "per_device_eval_batch_size": 32, 
-        "evaluation_strategy": "epoch",
-        "save_strategy": "epoch",
-        "logging_strategy": "epoch",
-        "overwrite_output_dir": True,
-        "load_best_model_at_end": True,
-        "report_to": None
     }
 }
 
@@ -91,15 +87,15 @@ model_config = {
         "greater_is_better":False,
         "learning_rate": 5e-6,
         "load_best_model_at_end": True,
-        "logging_dir":"./logs",
+        "logging_dir": str(output_root / "logs"),
         "logging_strategy": "epoch",
         "metric_for_best_model":"eval_loss",
         "num_train_epochs": 5,
-        "output_dir": "./results",
+        "output_dir": str(output_root / "checkpoints"),
         "overwrite_output_dir": True,
         "per_device_eval_batch_size": 32, 
         "per_device_train_batch_size": 16,
-        "report_to": None,
+        "report_to": "none",
         "save_strategy": "epoch",
         "save_total_limit": 1
     }
