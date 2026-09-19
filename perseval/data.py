@@ -18,6 +18,14 @@ log.basicConfig(
 # Changing the random seed will change how the datasets are split
 seed(config.seed)
 
+
+ADAPTATION_OPTIONS = "Possible values are:\n \
+                - False (bool): No adaptation is performed. The train and test splits are completly disjoint. The adaptation split is empty.\n \
+                - 'train' (str): A small percentage (defined in the config) of the annotations by test users is contained in the training split. The adaptation split is empty. This mirrors a situation in which one can obtain a minimal amount of annotationd *before* training the system.\n \
+                - 'test' (str): A small percentage (defined in the config) of the annotations by the test user is in the adapatation split. This mirrors a situation in which one has a trained system (trained on the training users, with no annotations from the test users) and want to adapt the system *after* training it.\n"
+
+UNKNOWN_TRAIT = "UNK"
+
 @dataclass
 class PerspectivistDataset:
     def __init__(self):
@@ -30,6 +38,158 @@ class PerspectivistDataset:
         self.user_adaptation = None
         self.named = None
         self.extended = None
+
+    user_column = None
+    text_column = None
+
+    def get_splits(self, extended, user_adaptation, named, baseline=False):
+        if not user_adaptation in [False, "train", "test"]:
+            raise Exception(ADAPTATION_OPTIONS)
+
+        log.info("Generating Named: %s, User adaptation: %s, Extended: %s" % (named, user_adaptation, extended))
+
+        self.user_adaptation = user_adaptation
+        self.named = named
+        self.extended = extended
+
+        self.training_set = self.adaptation_set = self.test_set = None
+
+        if (not user_adaptation and not named) and not baseline:
+            raise Exception("Invalid parameter configuration (user_adaptation=False, named=False). \
+                            You need to at least know the explicit user traits for test users if no annotations are available")
+
+        train_user_ids, adaptation_test_user_ids, adaptation_text_ids, test_text_ids = self.sample_split_ids()
+        train_split, adaptation_split, test_split = self._fill_splits(
+            set(train_user_ids), set(adaptation_test_user_ids),
+            set(adaptation_text_ids), set(test_text_ids), named)
+
+        self._assign_splits(user_adaptation, train_split, adaptation_split, test_split)
+        if not extended:
+            self._remove_test_texts_from_training()
+
+        self.check_splits(user_adaptation, extended, named)
+        self.describe_splits()
+
+    def sample_split_ids(self):
+        user_ids = set(list(self.dataset[self.user_column]))
+        percentages = config.dataset_specific_splits[self.name]
+
+        # Sample adapt+test users
+        seed(config.seed)
+        adaptation_test_user_ids = sample(sorted(user_ids), int(len(user_ids) * percentages["user_based_split_percentage"]))
+        test_users = set(adaptation_test_user_ids)
+        train_user_ids = [u for u in user_ids if not u in test_users]
+
+        adapt_test_text_id = [t_id for t_id, user in zip(self.dataset[self.text_column], self.dataset[self.user_column]) if user in test_users]
+        seed(config.seed)
+        adaptation_text_ids = sample(sorted(adapt_test_text_id), int(len(adapt_test_text_id) * percentages["text_based_split_percentage"]))
+        adaptation_texts = set(adaptation_text_ids)
+        test_text_ids = [t_id for t_id in adapt_test_text_id if t_id not in adaptation_texts]
+        return train_user_ids, adaptation_test_user_ids, adaptation_text_ids, test_text_ids
+
+    def read_text(self, row):
+        raise NotImplementedError
+
+    def read_labels(self, row):
+        raise NotImplementedError
+
+    def read_traits(self, row):
+        return {}
+
+    def _fill_splits(self, train_users, test_users, adaptation_texts, test_texts, named):
+        train_split = PerspectivistSplit(type="train")
+        adaptation_split = PerspectivistSplit(type="adaptation")
+        test_split = PerspectivistSplit(type="test")
+
+        for row in tqdm(self.dataset):
+            user_id, text_id = row[self.user_column], row[self.text_column]
+
+            memberships = []
+            if user_id in train_users:
+                memberships.append((train_split, True))
+            if user_id in test_users:
+                memberships.append((adaptation_split, text_id in adaptation_texts))
+                memberships.append((test_split, text_id in test_texts))
+
+            for split, annotated in memberships:
+                # Read user
+                if not user_id in split.users:
+                    split.users[user_id] = User(user_id)
+                user = split.users[user_id]
+                # Read traits only if named
+                if named:
+                    self._record_traits(user, row)
+                if annotated:
+                    self._record_annotation(split, user, text_id, row)
+
+        return train_split, adaptation_split, test_split
+
+    def _record_traits(self, user, row):
+        for dimension, value in self.read_traits(row).items():
+            user.traits[dimension] = [value]
+            if value != UNKNOWN_TRAIT:
+                self.traits.setdefault(dimension, set()).add(value)
+
+    def _record_annotation(self, split, user, text_id, row):
+        # Read text
+        split.texts[text_id] = self.read_text(row)
+        # Read annotation
+        labels = self.read_labels(row)
+        split.annotation[(user.id, text_id)] = labels
+        # Read labels by text
+        if not text_id in split.annotation_by_text:
+            split.annotation_by_text[text_id] = []
+        split.annotation_by_text[text_id].append({"user": user, "label": dict(labels)})
+        for label, value in labels.items():
+            self.labels[label].add(value)
+
+    def _assign_splits(self, user_adaptation, train_split, adaptation_split, test_split):
+        if user_adaptation == False:
+            # You know nothing about the new test users except their explicit traits
+            # You cannot use their adaptation annotations
+            self.training_set = train_split
+            self.adaptation_set = PerspectivistSplit(type="adaptation")
+            self.test_set = test_split
+
+        elif user_adaptation == "train":
+            # You can use a few annotations by test users at training time
+            # These annotations are directly included in the training split,
+            # the adaptation split is empty
+
+            # Train + Adapt in the train set
+            train_split.users = {**train_split.users, **adaptation_split.users}
+            train_split.texts = {**train_split.texts, **adaptation_split.texts}
+            train_split.annotation = {**train_split.annotation, **adaptation_split.annotation}
+
+            for t_id in adaptation_split.annotation_by_text.keys():
+                if t_id in train_split.annotation_by_text:
+                    # add the annotations
+                    train_split.annotation_by_text[t_id] = train_split.annotation_by_text[t_id] + adaptation_split.annotation_by_text[t_id]
+                else:
+                    train_split.annotation_by_text[t_id] = adaptation_split.annotation_by_text[t_id]
+            self.training_set = train_split
+            self.adaptation_set = PerspectivistSplit(type="adaptation")
+            self.test_set = test_split
+
+        elif user_adaptation == "test":
+            # You CANNOT use any test annotations at training time
+            # However, you can use a few annotations to adapt your trained system to test users
+            # These adaptation annotations from test users are in the adaptation split,
+            self.training_set = train_split
+            self.adaptation_set = adaptation_split
+            self.test_set = test_split
+
+    def _remove_test_texts_from_training(self):
+        strict_train_split = self.training_set
+        strict_train_split.annotation_by_text = {t:self.training_set.annotation_by_text[t] for t in self.training_set.annotation_by_text if t not in self.test_set.annotation_by_text}
+        # Filter annotations
+        for u, t in copy.deepcopy(self.training_set.annotation):
+            if t in self.test_set.annotation_by_text:
+                strict_train_split.annotation.pop((u, t))
+
+        # Filter texts
+        strict_train_split.texts = {k:self.training_set.texts[k] for k in self.training_set.texts if not k in self.test_set.texts}
+        self.training_set = strict_train_split
 
     def describe_splits(self):
         if not self.training_set.users:
@@ -173,6 +333,9 @@ class User:
 
 @dataclass
 class Epic(PerspectivistDataset):
+    user_column = "user"
+    text_column = "id_original"
+
     def __init__(self, label):
         super(Epic, self).__init__()
         self.name = "EPIC"
@@ -183,148 +346,19 @@ class Epic(PerspectivistDataset):
         self.label = config.dataset_label[self.name]
         self.labels[label] = set()
 
-    def get_splits(self, extended, user_adaptation, named, baseline=False):
-        if not user_adaptation in [False, "train", "test"]:
-            raise Exception(
-                "Possible values are:\n \
-                - False (bool): No adaptation is performed. The train and test splits are completly disjoint. The adaptation split is empty.\n \
-                - 'train' (str): A small percentage (defined in the config) of the annotations by test users is contained in the training split. The adaptation split is empty. This mirrors a situation in which one can obtain a minimal amount of annotationd *before* training the system.\n \
-                - 'test' (str): A small percentage (defined in the config) of the annotations by the test user is in the adapatation split. This mirrors a situation in which one has a trained system (trained on the training users, with no annotations from the test users) and want to adapt the system *after* training it.\n"
-                )
+    def read_text(self, row):
+        return {"post": row['parent_text'], "reply": row['text']}
 
-        log.info("Generating Named: %s, User adaptation: %s, Extended: %s" % (named, user_adaptation, extended))
+    def read_labels(self, row):
+        return {self.label: row['label']}
 
-        
-        self.user_adaptation = user_adaptation
-        self.named = named
-        self.extended = extended
-
-        self.training_set = self.adaptation_set = self.test_set = None
-
-        if (not user_adaptation and not named) and not baseline:
-            raise Exception("Invalid parameter configuration (user_adaptation=False, named=False). \
-                            You need to at least know the explicit user traits for test users if no annotations are available")
-        
-        user_ids = set(list(self.dataset['user']))
-
-        # Sample adapt+test users
-        seed(config.seed)
-        adaptation_test_user_ids = sample(sorted(user_ids), int(len(user_ids) * config.dataset_specific_splits[self.name]["user_based_split_percentage"]))
-        train_user_ids = [u for u in user_ids if not u in adaptation_test_user_ids]
-        adapt_test_text_id = [t_id for t_id, user in zip(self.dataset["id_original"], self.dataset["user"]) if user in adaptation_test_user_ids]
-        seed(config.seed)
-        adaptation_text_ids = sample(sorted(adapt_test_text_id), int(len(adapt_test_text_id) * config.dataset_specific_splits[self.name]["text_based_split_percentage"]))
-        test_text_ids = [t_id for t_id in adapt_test_text_id if t_id not in adaptation_text_ids]
-
-        train_split , adaptation_split, test_split = PerspectivistSplit(type="train"), PerspectivistSplit(type="adaptation"), PerspectivistSplit(type="test")
-        splits = [train_split, adaptation_split, test_split]
-        for split in splits:
-            for row in tqdm(self.dataset):
-                # Read user
-                if (row['user'] in train_user_ids and split.type=="train") or \
-                    (row['user'] in adaptation_test_user_ids and split.type=="adaptation") or \
-                      (row['user'] in adaptation_test_user_ids and split.type=="test"):
-                    if not row['user'] in split.users:
-                        split.users[row['user']] = User(row['user'])
-                    
-                    # Read traits only if named
-                    if named:
-                        split.users[row['user']].traits["Gender"]=[row['Sex']]
-                        if "Gender" in self.traits:
-                            self.traits["Gender"].add(row["Sex"])
-                        else:
-                            self.traits["Gender"] = {(row["Sex"])}
-
-                        split.users[row['user']].traits["Nationality"]=[row['Nationality']]
-                        if "Nationality" in self.traits:
-                            self.traits["Nationality"].add(row["Nationality"])
-                        else:
-                            self.traits["Nationality"] = {(row["Nationality"])}
-                        try:
-                            generation = self.__convert_age(int(row['Age']))
-                            split.users[row['user']].traits["Generation"]=[generation]
-                            if "Generation" in self.traits:
-                                self.traits["Generation"].add(generation)
-                            else:
-                                self.traits["Generation"] = {generation}
-                        except ValueError as e:
-                            split.users[row['user']].traits["Generation"]=["UNK"]
-                    
-                # Read text
-                if (row['user'] in train_user_ids and split.type=="train") or \
-                    (row['user'] in adaptation_test_user_ids and row['id_original'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['user'] in adaptation_test_user_ids and row['id_original'] in test_text_ids and split.type=="test"):
-                    split.texts[row['id_original']] = {"post": row['parent_text'], "reply": row['text']} 
-                
-                # Read annotation
-                if (row['user'] in train_user_ids and split.type=="train") or \
-                    (row['user'] in adaptation_test_user_ids and row['id_original'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['user'] in adaptation_test_user_ids and row['id_original'] in test_text_ids and split.type=="test"):
-                    split.annotation[(row['user'], row['id_original'])] = {}
-                    split.annotation[(row['user'], row['id_original'])][self.label] = row['label']
-                    self.labels[self.label].add(row['label'])
-
-                # Read labels by text
-                if (row['user'] in train_user_ids and split.type=="train") or \
-                    (row['user'] in adaptation_test_user_ids and row['id_original'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['user'] in adaptation_test_user_ids and row['id_original'] in test_text_ids and split.type=="test"):
-                    if not row['id_original'] in split.annotation_by_text:
-                        split.annotation_by_text[row['id_original']] = []
-                    split.annotation_by_text[row['id_original']].append(
-                        {"user": split.users[row['user']], "label": {self.label: row['label']}})
-                    self.labels[self.label].add(row['label'])
-        
-        if user_adaptation == False:
-            # You know nothing about the new test users except their explicit traits
-            # You cannot use their adaptation annotations
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-                
-        elif user_adaptation == "train":
-            # You can use a few annotations by test users at training time
-            # These annotations are directly included in the training split, 
-            # the adaptation split is empty
-
-            # Train + Adapt in the train set
-            train_split.users = {**train_split.users, **adaptation_split.users}
-            train_split.texts = {**train_split.texts, **adaptation_split.texts}
-            train_split.annotation = {**train_split.annotation, **adaptation_split.annotation}
-
-            for t_id in adaptation_split.annotation_by_text.keys():
-                if t_id in train_split.annotation_by_text:
-                    # add the annotatios
-                    train_split.annotation_by_text[t_id] = train_split.annotation_by_text[t_id] + adaptation_split.annotation_by_text[t_id]
-                else:
-                    train_split.annotation_by_text[t_id] = adaptation_split.annotation_by_text[t_id]
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-
-                
-        elif user_adaptation == "test":
-            # You CANNOT use any test annotations at training time
-            # However, you can use a few annotations to adapt your trained system to test users 
-            # These adaptation annotations from test users are in the adaptation split, 
-            self.training_set = train_split
-            self.adaptation_set = adaptation_split
-            self.test_set = test_split
-
-        if not extended:
-            strict_train_split = self.training_set
-            strict_train_split.annotation_by_text = {t:self.training_set.annotation_by_text[t] for t in self.training_set.annotation_by_text if t not in self.test_set.annotation_by_text}
-            # Filter annotations
-            for u, t in copy.deepcopy(self.training_set.annotation):
-                if t in self.test_set.annotation_by_text:
-                    strict_train_split.annotation.pop((u, t))
-    
-            # Filter texts
-            strict_train_split.texts = {k:self.training_set.texts[k] for k in self.training_set.texts if not k in self.test_set.texts}
-            self.training_set = strict_train_split
-
-        self.check_splits(user_adaptation, extended, named)
-        self.describe_splits()
-        
+    def read_traits(self, row):
+        traits = {"Gender": row['Sex'], "Nationality": row['Nationality']}
+        try:
+            traits["Generation"] = self.__convert_age(int(row['Age']))
+        except ValueError:
+            traits["Generation"] = UNKNOWN_TRAIT
+        return traits
 
     def __convert_age(self, age):
         """Function to convert the age, represented as an integer,
@@ -344,6 +378,9 @@ class Epic(PerspectivistDataset):
 
 @dataclass
 class Brexit(PerspectivistDataset):
+    user_column = "annotator_id"
+    text_column = "instance_id"
+
     def __init__(self):
         super(Brexit, self).__init__()
         self.name = "BREXIT"
@@ -354,142 +391,41 @@ class Brexit(PerspectivistDataset):
         for label in labels:
             self.labels[label] = set()
 
-    def get_splits(self, extended, user_adaptation, named, baseline=False):
-        if not user_adaptation in [False, "train", "test"]:
-            raise Exception(
-                "Possible values are:\n \
-                - False (bool): No adaptation is performed. The train and test splits are completly disjoint. The adaptation split is empty.\n \
-                - 'train' (str): A small percentage (defined in the config) of the annotations by test users is contained in the training split. The adaptation split is empty. This mirrors a situation in which one can obtain a minimal amount of annotationd *before* training the system.\n \
-                - 'test' (str): A small percentage (defined in the config) of the annotations by the test user is in the adapatation split. This mirrors a situation in which one has a trained system (trained on the training users, with no annotations from the test users) and want to adapt the system *after* training it.\n"
-                )
-        
-        self.user_adaptation = user_adaptation
-        self.named = named
-        self.extended = extended
-
-        log.info("Generating. Named: %s, User adaptation: %s, Extended: %s" % (named, user_adaptation, extended))
-        self.training_set = self.adaptation_set = self.test_set = None
-
-        if (not user_adaptation and not named) and not baseline:
-            raise Exception("Invalid parameter configuration (user_adaptation=False, named=False). \
-                            You need to at least know the explicit user traits for test users if no annotations are available")
-        
+    def sample_split_ids(self):
         users_group_ids = self.dataset.to_pandas()[["annotator_id", "annotator_group"]].drop_duplicates()
         user_ids = list(users_group_ids['annotator_id'])
-        user_group = list(users_group_ids['annotator_group']) 
+        user_group = list(users_group_ids['annotator_group'])
 
         # Sample adapt+test users
         seed(config.seed)
-        train_user_ids, adaptation_test_user_ids = train_test_split(user_ids, 
-                                                        test_size=config.dataset_specific_splits[self.name]["user_based_split_percentage"], 
-                                                        random_state=config.seed, 
-                                                        shuffle=True, stratify=user_group)        
+        train_user_ids, adaptation_test_user_ids = train_test_split(user_ids,
+                                                        test_size=config.dataset_specific_splits[self.name]["user_based_split_percentage"],
+                                                        random_state=config.seed,
+                                                        shuffle=True, stratify=user_group)
         seed(config.seed)
         all_text_ids = list(set(self.dataset["instance_id"]))
-        train_text_ids = sample(sorted(all_text_ids), int(len(all_text_ids)*config.dataset_specific_splits[self.name]["text_based_split_percentage_train"]))
+        train_text_ids = set(sample(sorted(all_text_ids), int(len(all_text_ids)*config.dataset_specific_splits[self.name]["text_based_split_percentage_train"])))
         adaptation_test_text_ids = [t for t in all_text_ids if t not in train_text_ids]
         adaptation_text_ids = sample(sorted(adaptation_test_text_ids), int(len(adaptation_test_text_ids)*config.dataset_specific_splits[self.name]["text_based_split_percentage_dev"]))
-        test_text_ids = [t for t in adaptation_test_text_ids if t not in adaptation_text_ids]
+        adaptation_texts = set(adaptation_text_ids)
+        test_text_ids = [t for t in adaptation_test_text_ids if t not in adaptation_texts]
+        return train_user_ids, adaptation_test_user_ids, adaptation_text_ids, test_text_ids
 
-        train_split, adaptation_split, test_split = PerspectivistSplit(type="train"), PerspectivistSplit(type="adaptation"), PerspectivistSplit(type="test")
-        splits = [train_split, adaptation_split, test_split]
-        for split in splits:
-            for row in tqdm(self.dataset):
-                # Read user
-                if (row['annotator_id'] in train_user_ids and split.type=="train") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and split.type=="adaptation") or \
-                      (row['annotator_id'] in adaptation_test_user_ids and split.type=="test"):
-                    if not row['annotator_id'] in split.users:
-                        split.users[row['annotator_id']] = User(row['annotator_id'])
-                    
-                    # Read traits only if named
-                    if named:
-                        split.users[row['annotator_id']].traits["Group"]=[row['annotator_group']]                        
-                        if "Group" in self.traits:
-                            self.traits["Group"].add(row['annotator_group'])
-                        else:
-                            self.traits["Group"] = {row['annotator_group']}
+    def read_text(self, row):
+        return {"tweet": row['tweet']}
 
-                # Read text
-                if (row['annotator_id'] in train_user_ids and split.type=="train") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and  row['instance_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotator_id'] in adaptation_test_user_ids and row['instance_id'] in test_text_ids and split.type=="test"):
-                   split.texts[row['instance_id']] = {"tweet": row['tweet']}
-                
-                # Read annotation
-                if (row['annotator_id'] in train_user_ids and split.type=="train") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and  row['instance_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotator_id'] in adaptation_test_user_ids and row['instance_id'] in test_text_ids and split.type=="test"):
-                    split.annotation[(row['annotator_id'], row['instance_id'])] = {}
-                    for label in self.labels:
-                        split.annotation[(row['annotator_id'], row['instance_id'])][label] = row[label]
-                        self.labels[label].add(row[label])
+    def read_labels(self, row):
+        return {label: row[label] for label in self.labels}
 
-                # Read labels by text
-                if (row['annotator_id'] in train_user_ids and split.type=="train") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and  row['instance_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotator_id'] in adaptation_test_user_ids and row['instance_id'] in test_text_ids and split.type=="test"):
-                    if not row['instance_id'] in split.annotation_by_text:
-                        split.annotation_by_text[row['instance_id']] = []
-                    labels_dict = {label: row[label] for label in self.labels}    
-                    split.annotation_by_text[row['instance_id']].append(
-                        {"user": split.users[row['annotator_id']], "label": labels_dict})
-                    for label in self.labels:
-                        self.labels[label].add(row[label])
-                
-        if user_adaptation == False:
-            # You know nothing about the new test users except their explicit traits
-            # You cannot use their adaptation annotations
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-                
-        elif user_adaptation == "train":
-            # You can use a few annotations by test users at training time
-            # These annotations are directly included in the training split, 
-            # the adaptation split is empty
+    def read_traits(self, row):
+        return {"Group": row['annotator_group']}
 
-            # Train + Adapt in the train set
-            train_split.users = {**train_split.users, **adaptation_split.users}
-            train_split.texts = {**train_split.texts, **adaptation_split.texts}
-            train_split.annotation = {**train_split.annotation, **adaptation_split.annotation}
 
-            for t_id in adaptation_split.annotation_by_text.keys():
-                if t_id in train_split.annotation_by_text:
-                    # add the annotatios
-                    train_split.annotation_by_text[t_id] = train_split.annotation_by_text[t_id] + adaptation_split.annotation_by_text[t_id]
-                else:
-                    train_split.annotation_by_text[t_id] = adaptation_split.annotation_by_text[t_id]
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-
-                
-        elif user_adaptation == "test":
-            # You CANNOT use any test annotations at training time
-            # However, you can use a few annotations to adapt your trained system to test users 
-            # These adaptation annotations from test users are in the adaptation split, 
-            self.training_set = train_split
-            self.adaptation_set = adaptation_split
-            self.test_set = test_split
-        
-        if not extended:
-            strict_train_split = self.training_set
-            strict_train_split.annotation_by_text = {t:self.training_set.annotation_by_text[t] for t in self.training_set.annotation_by_text if t not in self.test_set.annotation_by_text}
-            # Filter annotations
-            for u, t in copy.deepcopy(self.training_set.annotation):
-                if t in self.test_set.annotation_by_text:
-                    strict_train_split.annotation.pop((u, t))
-    
-            # Filter texts
-            strict_train_split.texts = {k:self.training_set.texts[k] for k in self.training_set.texts if not k in self.test_set.texts}
-            self.training_set = strict_train_split
-
-        self.check_splits(user_adaptation, extended, named)
-        self.describe_splits()
-        
 @dataclass
 class DICES(PerspectivistDataset):
+    user_column = "rater_id"
+    text_column = "text_id"
+
     def __init__(self, label):
         super(DICES, self).__init__()
         self.name = "DICES"
@@ -498,155 +434,28 @@ class DICES(PerspectivistDataset):
         self.dataset = self.dataset.map(lambda x: {label: config.label_map[label][x[label]]})
         self.labels[label] = set()
 
+    def read_text(self, row):
+        return {"context": row['context'], "reply": row['response']}
 
-    def get_splits(self, extended, user_adaptation, named, baseline=False):
-        if not user_adaptation in [False, "train", "test"]:
-            raise Exception(
-                "Possible values are:\n \
-                - False (bool): No adaptation is performed. The train and test splits are completly disjoint. The adaptation split is empty.\n \
-                - 'train' (str): A small percentage (defined in the config) of the annotations by test users is contained in the training split. The adaptation split is empty. This mirrors a situation in which one can obtain a minimal amount of annotationd *before* training the system.\n \
-                - 'test' (str): A small percentage (defined in the config) of the annotations by the test user is in the adapatation split. This mirrors a situation in which one has a trained system (trained on the training users, with no annotations from the test users) and want to adapt the system *after* training it.\n"
-                )
-        
-        self.user_adaptation = user_adaptation
-        self.named = named
-        self.extended = extended
+    def read_labels(self, row):
+        return {self.label: row[self.label]}
 
-        log.info("Generating. Named: %s, User adaptation: %s, Extended: %s" % (named, user_adaptation, extended))
-        self.training_set = self.adaptation_set = self.test_set = None
-
-        if (not user_adaptation and not named) and not baseline:
-            raise Exception("Invalid parameter configuration (user_adaptation=False, named=False). \
-                            You need to at least know the explicit user traits for test users if no annotations are available")
-        
-        user_ids = set(list(self.dataset["rater_id"]))
-
-
-        # Sample adapt+test users
-        seed(config.seed)
-        adaptation_test_user_ids = sample(sorted(user_ids), int(len(user_ids) * config.dataset_specific_splits[self.name]["user_based_split_percentage"]))
-        train_user_ids = [u for u in user_ids if not u in adaptation_test_user_ids]
-        adapt_test_text_id = [t_id for t_id, user in zip(self.dataset["text_id"], self.dataset["rater_id"]) if user in adaptation_test_user_ids]
-        seed(config.seed)
-        adaptation_text_ids = sample(sorted(adapt_test_text_id), int(len(adapt_test_text_id) * config.dataset_specific_splits[self.name]["text_based_split_percentage"]))
-        test_text_ids = [t_id for t_id in adapt_test_text_id if t_id not in adaptation_text_ids]
-        
-        train_split , adaptation_split, test_split = PerspectivistSplit(type="train"), PerspectivistSplit(type="adaptation"), PerspectivistSplit(type="test")
-        splits = [train_split, adaptation_split, test_split]
-        for split in splits:
-            for row in tqdm(self.dataset):
-                # Read user
-                if (row['rater_id'] in train_user_ids and split.type=="train") or \
-                    (row['rater_id'] in adaptation_test_user_ids and split.type=="adaptation") or \
-                      (row['rater_id'] in adaptation_test_user_ids and split.type=="test"):
-                    if not row['rater_id'] in split.users:
-                        split.users[row['rater_id']] = User(row['rater_id'])
-                    
-                    # Read traits only if named
-                    if named:
-                        split.users[row['rater_id']].traits["Gender"]=[row['rater_gender']]
-                        if "Gender" in self.traits:
-                            self.traits["Gender"].add(row["rater_gender"])
-                        else:
-                            self.traits["Gender"] = {(row["rater_gender"])}
-
-                        split.users[row['rater_id']].traits["Generation"]=[row['rater_age']]
-                        if "Generation" in self.traits:
-                            self.traits["Generation"].add(row["rater_age"])
-                        else:
-                            self.traits["Generation"] = {(row["rater_age"])}
-
-                        split.users[row['rater_id']].traits["Race"]=[row['rater_race']]
-                        if "Race" in self.traits:
-                            self.traits["Race"].add(row["rater_race"])
-                        else:
-                            self.traits["Race"] = {(row["rater_race"])}
-
-                        split.users[row['rater_id']].traits["Education"]=[row['rater_education']]
-                        if "Education" in self.traits:
-                            self.traits["Education"].add(row["rater_education"])
-                        else:
-                            self.traits["Education"] = {(row["rater_education"])}
-                            
-                
-                # Read text
-                if (row['rater_id'] in train_user_ids and split.type=="train") or \
-                    (row['rater_id'] in adaptation_test_user_ids and row['text_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['rater_id'] in adaptation_test_user_ids and row['text_id'] in test_text_ids and split.type=="test"):
-                    split.texts[row['text_id']] = {"context": row['context'], "reply": row['response']} 
-                
-                # Read annotation
-                if (row['rater_id'] in train_user_ids and split.type=="train") or \
-                    (row['rater_id'] in adaptation_test_user_ids and row['text_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['rater_id'] in adaptation_test_user_ids and row['text_id'] in test_text_ids and split.type=="test"):
-                    split.annotation[(row['rater_id'], row['text_id'])] = {}
-                    split.annotation[(row['rater_id'], row['text_id'])][self.label] = row[self.label]
-                    self.labels[self.label].add(row[self.label])
-                
-                # Read labels by text
-                if (row['rater_id'] in train_user_ids and split.type=="train") or \
-                    (row['rater_id'] in adaptation_test_user_ids and row['text_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['rater_id'] in adaptation_test_user_ids and row['text_id'] in test_text_ids and split.type=="test"):
-                    if not row['text_id'] in split.annotation_by_text:
-                        split.annotation_by_text[row['text_id']] = []
-                    split.annotation_by_text[row['text_id']].append(
-                        {"user": split.users[row['rater_id']], "label": {self.label: row[self.label]}})
-                    self.labels[self.label].add(row[self.label])
-        
-        if user_adaptation == False:
-            # You know nothing about the new test users except their explicit traits
-            # You cannot use their adaptation annotations
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-                
-        elif user_adaptation == "train":
-            # You can use a few annotations by test users at training time
-            # These annotations are directly included in the training split, 
-            # the adaptation split is empty
-
-            # Train + Adapt in the train set
-            train_split.users = {**train_split.users, **adaptation_split.users}
-            train_split.texts = {**train_split.texts, **adaptation_split.texts}
-            train_split.annotation = {**train_split.annotation, **adaptation_split.annotation}
-
-            for t_id in adaptation_split.annotation_by_text.keys():
-                if t_id in train_split.annotation_by_text:
-                    # add the annotatios
-                    train_split.annotation_by_text[t_id] = train_split.annotation_by_text[t_id] + adaptation_split.annotation_by_text[t_id]
-                else:
-                    train_split.annotation_by_text[t_id] = adaptation_split.annotation_by_text[t_id]
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-
-                
-        elif user_adaptation == "test":
-            # You CANNOT use any test annotations at training time
-            # However, you can use a few annotations to adapt your trained system to test users 
-            # These adaptation annotations from test users are in the adaptation split, 
-            self.training_set = train_split
-            self.adaptation_set = adaptation_split
-            self.test_set = test_split
-
-        if not extended:
-            strict_train_split = self.training_set
-            strict_train_split.annotation_by_text = {t:self.training_set.annotation_by_text[t] for t in self.training_set.annotation_by_text if t not in self.test_set.annotation_by_text}
-            # Filter annotations
-            for u, t in copy.deepcopy(self.training_set.annotation):
-                if t in self.test_set.annotation_by_text:
-                    strict_train_split.annotation.pop((u, t))
-    
-            # Filter texts
-            strict_train_split.texts = {k:self.training_set.texts[k] for k in self.training_set.texts if not k in self.test_set.texts}
-            self.training_set = strict_train_split
-
-        self.check_splits(user_adaptation, extended, named)
-        self.describe_splits()
+    def read_traits(self, row):
+        return {"Gender": row['rater_gender'],
+                "Generation": row['rater_age'],
+                "Race": row['rater_race'],
+                "Education": row['rater_education']}
 
 
 @dataclass
 class MHS(PerspectivistDataset):
+    user_column = "annotator_id"
+    text_column = "comment_id"
+
+    EDUCATION = {"college_grad_aa":"educ-high","college_grad_ba":"educ-high","high_school_grad":"educ-low","masters":"educ-high","phd":"educ-high","professional_degree":"educ-low","some_college":"educ-low","some_high_school":"educ-low"}
+    IDEOLOGY = {"conservative":"conservative","extremely_conservative":"conservative","extremely_liberal":"liberal","liberal":"liberal","neutral":"neutral","no_opinion":"neutral","slightly_conservative":"conservative","slightly_liberal":"liberal"}
+    INCOME = {"100k-200k":"income-high","10k-50k":"income-low","<10k":"income-low",">200k":"income-high","50k-100k":"income-high"}
+
     def __init__(self, label):
         super(MHS, self).__init__()
         self.name = "MHS"
@@ -656,183 +465,33 @@ class MHS(PerspectivistDataset):
         self.dataset = self.dataset.map(lambda x: {"hateful": 1 if x["hatespeech"] > 0 else 0})
         self.labels[label] = set()
 
-    def get_splits(self, extended, user_adaptation, named, baseline = False):
-        if not user_adaptation in [False, "train", "test"]:
-            raise Exception(
-                "Possible values are:\n \
-                - False (bool): No adaptation is performed. The train and test splits are completly disjoint. The adaptation split is empty.\n \
-                - 'train' (str): A small percentage (defined in the config) of the annotations by test users is contained in the training split. The adaptation split is empty. This mirrors a situation in which one can obtain a minimal amount of annotationd *before* training the system.\n \
-                - 'test' (str): A small percentage (defined in the config) of the annotations by the test user is in the adapatation split. This mirrors a situation in which one has a trained system (trained on the training users, with no annotations from the test users) and want to adapt the system *after* training it.\n"
-                )
+    def read_text(self, row):
+        return {"post": row['text']}
 
-        log.info("Generation Named: %s, User adaptation: %s, Extended: %s" % (named, user_adaptation, extended))
+    def read_labels(self, row):
+        return {"hateful": 1 if row["hatespeech"] > 0 else 0}
 
-        
-        self.user_adaptation = user_adaptation
-        self.named = named
-        self.extended = extended
-
-        self.training_set = self.adaptation_set = self.test_set = None
-
-        if (not user_adaptation and not named) and not baseline:
-            raise Exception("Invalid parameter configuration (user_adaptation=False, named=False). \
-                            You need to at least know the explicit user traits for test users if no annotations are available")
-        
-        user_ids = set(list(self.dataset['annotator_id']))
-
-        # Sample adapt+test users
-        seed(config.seed)
-        adaptation_test_user_ids = sample(sorted(user_ids), int(len(user_ids) * config.dataset_specific_splits[self.name]["user_based_split_percentage"]))
-        train_user_ids = [u for u in user_ids if not u in adaptation_test_user_ids]
-        adapt_test_text_id = [t_id for t_id, user in zip(self.dataset["comment_id"], self.dataset["annotator_id"]) if user in adaptation_test_user_ids]
-        seed(config.seed)
-        adaptation_text_ids = sample(sorted(adapt_test_text_id), int(len(adapt_test_text_id) * config.dataset_specific_splits[self.name]["text_based_split_percentage"]))
-        test_text_ids = [t_id for t_id in adapt_test_text_id if t_id not in adaptation_text_ids]
-
-        train_split , adaptation_split, test_split = PerspectivistSplit(type="train"), PerspectivistSplit(type="adaptation"), PerspectivistSplit(type="test")
-        splits = [train_split, adaptation_split, test_split]
-        education={"college_grad_aa":"educ-high","college_grad_ba":"educ-high","high_school_grad":"educ-low","masters":"educ-high","phd":"educ-high","professional_degree":"educ-low","some_college":"educ-low","some_high_school":"educ-low"}
-        ideology={"conservative":"conservative","extremely_conservative":"conservative","extremely_liberal":"liberal","liberal":"liberal","neutral":"neutral","no_opinion":"neutral","slightly_conservative":"conservative","slightly_liberal":"liberal"}
-        income={"100k-200k":"income-high","10k-50k":"income-low","<10k":"income-low",">200k":"income-high","50k-100k":"income-high"}
-        for split in splits:
-            for row in tqdm(self.dataset):
-                # Read user
-                if (row['annotator_id'] in train_user_ids and split.type=="train") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and split.type=="adaptation") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and split.type=="test"):
-                    if not row['annotator_id'] in split.users:
-                        split.users[row['annotator_id']] = User(row['annotator_id'])
-                    
-                    # Read traits only if named
-                    if named:
-                        
-                        # Education
-                        if row['annotator_educ'] is not None:
-                            split.users[row['annotator_id']].traits["Education"]=[education[row['annotator_educ']]]
-                            if "Education" in self.traits:
-                                self.traits["Education"].add(education[row["annotator_educ"]])
-                            else:
-                                self.traits["Education"] = {(education[row["annotator_educ"]])}
-                            
-                        # Gender
-                        split.users[row['annotator_id']].traits["Gender"]=[row['annotator_gender']]
-                        if "Gender" in self.traits:
-                            self.traits["Gender"].add(row["annotator_gender"])
-                        else:
-                            self.traits["Gender"] = {(row["annotator_gender"])}
-                            
-                        # Ideology
-                        if row['annotator_ideology'] is not None:
-                            split.users[row['annotator_id']].traits["Ideology"]=[ideology[row['annotator_ideology']]]
-                            if "Ideology" in self.traits:
-                                self.traits["Ideology"].add(ideology[row["annotator_ideology"]])
-                            else:
-                                self.traits["Ideology"] = {(ideology[row["annotator_ideology"]])}
-                            
-                        # Race
-                        """
-                        for race in ["asian","black","latinx","middle_eastern","native_american","pacific_islander","white","other"]:
-                            split.users[row['annotator_id']].traits["Race-"+race.replace("_","-")]=[row['annotator_race_'+race]]
-                            if "Race-"+race.replace("_","-") in self.traits:
-                                self.traits["Race-"+race.replace("_","-")].add("yes" if row["annotator_race_"+race] == True else "no")
-                            else:
-                                self.traits["Race-"+race.replace("_","-")] = {("yes" if row["annotator_race_"+race] == True else "no")}
-                        """  
-
-                        # Income
-                        if row['annotator_income'] is not None:
-                            split.users[row['annotator_id']].traits["Income"]=[income[row['annotator_income']]]
-                            if "Income" in self.traits:
-                                self.traits["Income"].add(income[row["annotator_income"]])
-                            else:
-                                self.traits["Income"] = {(income[row["annotator_income"]])}
-                                
-                        # Age 
-                        if row['annotator_age'] is not None:
-                            split.users[row['annotator_id']].traits["Age"]=[self.__convert_age(int(row['annotator_age']))]
-                            if "Age" in self.traits:
-                                self.traits["Age"].add(self.__convert_age(int(row['annotator_age'])))
-                            else:
-                                self.traits["Age"] = {(self.__convert_age(int(row['annotator_age'])))}
-                    
-                # Read text
-                if (row['annotator_id'] in train_user_ids and split.type=="train") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and row['comment_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotator_id'] in adaptation_test_user_ids and row['comment_id'] in test_text_ids and split.type=="test"):
-                    split.texts[row['comment_id']] = {"post": row['text']} 
-                
-                # Read annotation
-                if (row['annotator_id'] in train_user_ids and split.type=="train") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and row['comment_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotator_id'] in adaptation_test_user_ids and row['comment_id'] in test_text_ids and split.type=="test"):
-                    split.annotation[(row['annotator_id'], row['comment_id'])] = {}
-                    split.annotation[(row['annotator_id'], row['comment_id'])]["hateful"] = 1 if row["hatespeech"] > 0 else 0
-                    self.labels["hateful"].add(1 if row["hatespeech"] > 0 else 0)
-
-                # Read labels by text
-                if (row['annotator_id'] in train_user_ids and split.type=="train") or \
-                    (row['annotator_id'] in adaptation_test_user_ids and row['comment_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotator_id'] in adaptation_test_user_ids and row['comment_id'] in test_text_ids and split.type=="test"):
-                    if not row['comment_id'] in split.annotation_by_text:
-                        split.annotation_by_text[row['comment_id']] = []
-                    split.annotation_by_text[row['comment_id']].append(
-                        {"user": split.users[row['annotator_id']], "label": {"hateful":1 if row["hatespeech"] > 0 else 0}})
-                    self.labels["hateful"].add(1 if row["hatespeech"] > 0 else 0)
-        
-        if user_adaptation == False:
-            # You know nothing about the new test users except their explicit traits
-            # You cannot use their adaptation annotations
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-                
-        elif user_adaptation == "train":
-            # You can use a few annotations by test users at training time
-            # These annotations are directly included in the training split, 
-            # the adaptation split is empty
-
-            # Train + Adapt in the train set
-            train_split.users = {**train_split.users, **adaptation_split.users}
-            train_split.texts = {**train_split.texts, **adaptation_split.texts}
-            train_split.annotation = {**train_split.annotation, **adaptation_split.annotation}
-
-            for t_id in adaptation_split.annotation_by_text.keys():
-                if t_id in train_split.annotation_by_text:
-                    # add the annotations
-                    train_split.annotation_by_text[t_id] = train_split.annotation_by_text[t_id] + adaptation_split.annotation_by_text[t_id]
-                else:
-                    train_split.annotation_by_text[t_id] = adaptation_split.annotation_by_text[t_id]
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-
-                
-        elif user_adaptation == "test":
-            # You CANNOT use any test annotations at training time
-            # However, you can use a few annotations to adapt your trained system to test users 
-            # These adaptation annotations from test users are in the adaptation split, 
-            self.training_set = train_split
-            self.adaptation_set = adaptation_split
-            self.test_set = test_split
-
-        if not extended:
-            strict_train_split = self.training_set
-            strict_train_split.annotation_by_text = {t:self.training_set.annotation_by_text[t] for t in self.training_set.annotation_by_text if t not in self.test_set.annotation_by_text}
-            # Filter annotations
-            for u, t in copy.deepcopy(self.training_set.annotation):
-                if t in self.test_set.annotation_by_text:
-                    strict_train_split.annotation.pop((u, t))
-    
-            # Filter texts
-            strict_train_split.texts = {k:self.training_set.texts[k] for k in self.training_set.texts if not k in self.test_set.texts}
-            self.training_set = strict_train_split
-
-        self.check_splits(user_adaptation, extended, named)
-        self.describe_splits()
+    def read_traits(self, row):
+        traits = {}
+        # Education
+        if row['annotator_educ'] is not None:
+            traits["Education"] = self.EDUCATION[row['annotator_educ']]
+        # Gender
+        traits["Gender"] = row['annotator_gender']
+        # Ideology
+        if row['annotator_ideology'] is not None:
+            traits["Ideology"] = self.IDEOLOGY[row['annotator_ideology']]
+        # Income
+        if row['annotator_income'] is not None:
+            traits["Income"] = self.INCOME[row['annotator_income']]
+        # Age
+        if row['annotator_age'] is not None:
+            traits["Age"] = self.__convert_age(int(row['annotator_age']))
+        return traits
 
     def __convert_age(self, age):
         """Function to convert the age, represented as an integer,
-        into a label. 
+        into a label.
         The annotations were done in 2020, so the labels are based on 2020.
         """
         if age >= 56:
@@ -847,6 +506,9 @@ class MHS(PerspectivistDataset):
 
 @dataclass
 class MD(PerspectivistDataset):
+    user_column = "annotators"
+    text_column = "text_id"
+
     def __init__(self, label):
         super(MD, self).__init__()
         self.name = "MD"
@@ -855,128 +517,12 @@ class MD(PerspectivistDataset):
         self.dataset = dataset["train"]
         self.labels[label] = set()
 
-    def get_splits(self, extended, user_adaptation, named, baseline=False):
-        if not user_adaptation in [False, "train", "test"]:
-            raise Exception(
-                "Possible values are:\n \
-                - False (bool): No adaptation is performed. The train and test splits are completly disjoint. The adaptation split is empty.\n \
-                - 'train' (str): A small percentage (defined in the config) of the annotations by test users is contained in the training split. The adaptation split is empty. This mirrors a situation in which one can obtain a minimal amount of annotationd *before* training the system.\n \
-                - 'test' (str): A small percentage (defined in the config) of the annotations by the test user is in the adapatation split. This mirrors a situation in which one has a trained system (trained on the training users, with no annotations from the test users) and want to adapt the system *after* training it.\n"
-                )
+    def read_text(self, row):
+        return {"text": row['text']}
 
-        log.info("Generating Named: %s, User adaptation: %s, Extended: %s" % (named, user_adaptation, extended))
+    def read_labels(self, row):
+        return {"offensiveness": row['annotations']}
 
-        
-        self.user_adaptation = user_adaptation
-        self.named = named
-        self.extended = extended
-
-        self.training_set = self.adaptation_set = self.test_set = None
-
-        if (not user_adaptation and not named) and not baseline:
-            raise Exception("Invalid parameter configuration (user_adaptation=False, named=False). \
-                            You need to at least know the explicit user traits for test users if no annotations are available")
-	
-        
-        user_ids = set(list(self.dataset['annotators']))
-
-        # Sample adapt+test users
-        seed(config.seed)
-        adaptation_test_user_ids = sample(sorted(user_ids), int(len(user_ids) * config.dataset_specific_splits[self.name]["user_based_split_percentage"]))
-        train_user_ids = [u for u in user_ids if not u in adaptation_test_user_ids]
-        adapt_test_text_id = [t_id for t_id, user in zip(self.dataset["text_id"], self.dataset["annotators"]) if user in adaptation_test_user_ids]
-        seed(config.seed)
-        adaptation_text_ids = sample(sorted(adapt_test_text_id), int(len(adapt_test_text_id) * config.dataset_specific_splits[self.name]["text_based_split_percentage"]))
-        test_text_ids = [t_id for t_id in adapt_test_text_id if t_id not in adaptation_text_ids]
-
-        train_split , adaptation_split, test_split = PerspectivistSplit(type="train"), PerspectivistSplit(type="adaptation"), PerspectivistSplit(type="test")
-        splits = [train_split, adaptation_split, test_split]
-        for split in splits:
-            for row in tqdm(self.dataset):
-                # Read user
-                if (row['annotators'] in train_user_ids and split.type=="train") or \
-                    (row['annotators'] in adaptation_test_user_ids and split.type=="adaptation") or \
-                      (row['annotators'] in adaptation_test_user_ids and split.type=="test"):
-                    if not row['annotators'] in split.users:
-                        split.users[row['annotators']] = User(row['annotators'])
-                    
-                    # Read traits only if named
-                    if named:
-                        raise Exception("Invalid parameter configuration. \
+    def read_traits(self, row):
+        raise Exception("Invalid parameter configuration. \
                             This dataset does not contain any information about the annotators.")
-                            
-                    
-                # Read text
-                if (row['annotators'] in train_user_ids and split.type=="train") or \
-                    (row['annotators'] in adaptation_test_user_ids and row['text_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotators'] in adaptation_test_user_ids and row['text_id'] in test_text_ids and split.type=="test"):
-                    split.texts[row['text_id']] = {"text": row['text']} 
-                
-                # Read annotation
-                if (row['annotators'] in train_user_ids and split.type=="train") or \
-                    (row['annotators'] in adaptation_test_user_ids and row['text_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotators'] in adaptation_test_user_ids and row['text_id'] in test_text_ids and split.type=="test"):
-                    split.annotation[(row['annotators'], row['text_id'])] = {}
-                    split.annotation[(row['annotators'], row['text_id'])]["offensiveness"] = row['annotations']
-                    self.labels["offensiveness"].add(row['annotations'])
-
-                # Read labels by text
-                if (row['annotators'] in train_user_ids and split.type=="train") or \
-                    (row['annotators'] in adaptation_test_user_ids and row['text_id'] in adaptation_text_ids and split.type=="adaptation") or \
-                        (row['annotators'] in adaptation_test_user_ids and row['text_id'] in test_text_ids and split.type=="test"):
-                    if not row['text_id'] in split.annotation_by_text:
-                        split.annotation_by_text[row['text_id']] = []
-                    split.annotation_by_text[row['text_id']].append(
-                        {"user": split.users[row['annotators']], "label": {"offensiveness": row['annotations']}})
-                    self.labels["offensiveness"].add(row['annotations'])
-        
-        if user_adaptation == False:
-            # You know nothing about the new test users except their explicit traits
-            # You cannot use their adaptation annotations
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-                
-        elif user_adaptation == "train":
-            # You can use a few annotations by test users at training time
-            # These annotations are directly included in the training split, 
-            # the adaptation split is empty
-
-            # Train + Adapt in the train set
-            train_split.users = {**train_split.users, **adaptation_split.users}
-            train_split.texts = {**train_split.texts, **adaptation_split.texts}
-            train_split.annotation = {**train_split.annotation, **adaptation_split.annotation}
-
-            for t_id in adaptation_split.annotation_by_text.keys():
-                if t_id in train_split.annotation_by_text:
-                    # add the annotatios
-                    train_split.annotation_by_text[t_id] = train_split.annotation_by_text[t_id] + adaptation_split.annotation_by_text[t_id]
-                else:
-                    train_split.annotation_by_text[t_id] = adaptation_split.annotation_by_text[t_id]
-            self.training_set = train_split
-            self.adaptation_set = PerspectivistSplit(type="adaptation")
-            self.test_set = test_split
-
-                
-        elif user_adaptation == "test":
-            # You CANNOT use any test annotations at training time
-            # However, you can use a few annotations to adapt your trained system to test users 
-            # These adaptation annotations from test users are in the adaptation split, 
-            self.training_set = train_split
-            self.adaptation_set = adaptation_split
-            self.test_set = test_split
-
-        if not extended:
-            strict_train_split = self.training_set
-            strict_train_split.annotation_by_text = {t:self.training_set.annotation_by_text[t] for t in self.training_set.annotation_by_text if t not in self.test_set.annotation_by_text}
-            # Filter annotations
-            for u, t in copy.deepcopy(self.training_set.annotation):
-                if t in self.test_set.annotation_by_text:
-                    strict_train_split.annotation.pop((u, t))
-    
-            # Filter texts
-            strict_train_split.texts = {k:self.training_set.texts[k] for k in self.training_set.texts if not k in self.test_set.texts}
-            self.training_set = strict_train_split
-
-        self.check_splits(user_adaptation, extended, named)
-        self.describe_splits()        

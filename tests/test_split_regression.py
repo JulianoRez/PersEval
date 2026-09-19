@@ -1,32 +1,5 @@
-"""Regression test for the split protocol.
-
-The five ``get_splits`` implementations in ``perseval/data.py`` are being
-consolidated into a single generic engine. Before that refactoring can be
-trusted, we need proof that it does not move a single annotation between
-splits.
-
-This script records, for every dataset and every valid combination of flags,
-exactly which users, texts and ``(user, text)`` annotations end up in the
-training, adaptation and test splits, and reduces each of those to a digest.
-Re-running it after a change reports any split whose contents moved.
-
-Record the baseline BEFORE refactoring::
-
-    python tests/test_split_regression.py --update
-
-Check nothing moved AFTER refactoring::
-
-    python tests/test_split_regression.py
-
-Options::
-
-    --datasets EPIC,BREXIT     restrict to a subset (default: all but MHS)
-    --datasets all             include MHS, which is slow (~8k annotators)
-"""
-
 import os
 
-# tqdm must be silenced before perseval.data imports it.
 os.environ.setdefault("TQDM_DISABLE", "1")
 
 import argparse
@@ -40,12 +13,10 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-from perseval.data import Epic, Brexit, DICES, MHS, MD  # noqa: E402
+from perseval.data import Epic, Brexit, DICES, MHS, MD
 
 BASELINE_PATH = Path(__file__).parent / "baselines" / "splits.json"
 
-# Each dataset is rebuilt from scratch for every combination of flags, because
-# ``get_splits`` mutates the instance it is called on.
 DATASET_FACTORIES = {
     "EPIC": lambda: Epic("irony"),
     "BREXIT": lambda: Brexit(),
@@ -54,22 +25,17 @@ DATASET_FACTORIES = {
     "MHS": lambda: MHS("hateful"),
 }
 
-# MHS has ~7.9k annotators; recording it takes long enough that it is opt-in.
 DEFAULT_DATASETS = ["EPIC", "BREXIT", "DICES", "MD"]
 
 SPLIT_NAMES = ("train", "adaptation", "test")
 
 
 def flag_combinations(dataset_name):
-    """Yield every combination of flags the library accepts for this dataset."""
     for user_adaptation in (False, "train", "test"):
         for extended in (False, True):
             for named in (False, True):
-                # Documented as invalid: with no adaptation and no traits, the
-                # model knows nothing at all about the test users.
                 if not user_adaptation and not named:
                     continue
-                # MD-Agreement ships no annotator metadata.
                 if dataset_name == "MD" and named:
                     continue
                 yield user_adaptation, extended, named
@@ -80,7 +46,6 @@ def combination_key(user_adaptation, extended, named):
 
 
 def _digest(*groups):
-    """Order-independent digest of several groups of strings."""
     sha = hashlib.sha256()
     for group in groups:
         for item in group:
@@ -90,8 +55,11 @@ def _digest(*groups):
     return sha.hexdigest()[:16]
 
 
+def _encode(value):
+    return json.dumps(value, sort_keys=True, default=str)
+
+
 def _trait_rows(split):
-    """Flatten every user's traits into sortable ``user|dimension|value`` rows."""
     rows = []
     for user_id, user in split.users.items():
         for dimension, values in user.traits.items():
@@ -99,32 +67,46 @@ def _trait_rows(split):
     return sorted(rows)
 
 
+def _split_fingerprint(split):
+    users = sorted(str(u) for u in split.users)
+    texts = sorted(f"{t}\x1f{_encode(content)}" for t, content in split.texts.items())
+    annotations = sorted(
+        f"{u}\x1f{t}\x1f{_encode(labels)}" for (u, t), labels in split.annotation.items()
+    )
+    annotation_order = [f"{u}\x1f{t}" for u, t in split.annotation]
+    by_text = [
+        f"{t}\x1f{entry['user'].id}\x1f{_encode(entry['label'])}"
+        for t, entries in split.annotation_by_text.items()
+        for entry in entries
+    ]
+    traits = _trait_rows(split)
+    return {
+        "n_users": len(users),
+        "n_texts": len(texts),
+        "n_annotations": len(annotations),
+        "n_traits": len(traits),
+        "digest": _digest(users, texts, annotations),
+        "order_digest": _digest(annotation_order, by_text),
+        "traits_digest": _digest(traits),
+    }
+
+
 def fingerprint(dataset):
-    """Reduce the three splits of a dataset to counts plus a digest each."""
-    summary = {}
-    for name in SPLIT_NAMES:
-        split = getattr(dataset, f"{'training' if name == 'train' else name}_set")
-        users = sorted(str(u) for u in split.users)
-        texts = sorted(str(t) for t in split.texts)
-        annotations = sorted(f"{u}\x1f{t}" for u, t in split.annotation)
-        # Traits are recorded separately: ``named`` changes them without moving
-        # a single annotation, and ``read_traits`` is one of the hooks the
-        # refactoring introduces, so it needs its own guard.
-        traits = _trait_rows(split)
-        summary[name] = {
-            "n_users": len(users),
-            "n_texts": len(texts),
-            "n_annotations": len(annotations),
-            "n_traits": len(traits),
-            "digest": _digest(users, texts, annotations),
-            "traits_digest": _digest(traits),
-        }
+    summary = {
+        name: _split_fingerprint(
+            getattr(dataset, f"{'training' if name == 'train' else name}_set"))
+        for name in SPLIT_NAMES
+    }
+    vocabulary = sorted(
+        [f"trait\x1f{dim}\x1f{v}" for dim, values in dataset.traits.items() for v in values]
+        + [f"label\x1f{name}\x1f{v}" for name, values in dataset.labels.items() for v in values]
+    )
+    summary["vocabulary_digest"] = _digest(vocabulary)
     return summary
 
 
 @contextlib.contextmanager
 def quiet():
-    """Silence the progress bars and the split statistics while recording."""
     logging.disable(logging.CRITICAL)
     try:
         with open(os.devnull, "w") as devnull:
@@ -135,7 +117,6 @@ def quiet():
 
 
 def record(dataset_name):
-    """Fingerprint every valid flag combination for one dataset."""
     recorded = {}
     for user_adaptation, extended, named in flag_combinations(dataset_name):
         key = combination_key(user_adaptation, extended, named)
@@ -149,8 +130,6 @@ def record(dataset_name):
                 )
             recorded[key] = fingerprint(dataset)
         except Exception as exc:
-            # A combination that raises today must keep raising: that is part
-            # of the behaviour the refactoring has to preserve.
             recorded[key] = {"raises": f"{type(exc).__name__}: {str(exc)[:160]}"}
         print(f"  {key}  ->  {_describe(recorded[key])}", flush=True)
     return recorded
@@ -165,14 +144,13 @@ def _describe(entry):
 
 
 def compare(baseline, current):
-    """Return a list of human-readable differences between two recordings."""
     problems = []
     for dataset_name in sorted(set(baseline) | set(current)):
         if dataset_name not in baseline:
             problems.append(f"{dataset_name}: not in the baseline (run --update)")
             continue
         if dataset_name not in current:
-            continue  # simply not part of this run
+            continue
         old, new = baseline[dataset_name], current[dataset_name]
         for key in sorted(set(old) | set(new)):
             if key not in old:

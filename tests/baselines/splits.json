@@ -7,24 +7,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 2,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "4629575fd5249a9b"
       },
       "train": {
-        "digest": "cf126fd48c24ad25",
+        "digest": "6e34d5bf2c882a17",
         "n_annotations": 3200,
         "n_texts": 800,
         "n_traits": 4,
         "n_users": 4,
+        "order_digest": "c11ca705cb4f0bb5",
         "traits_digest": "3465912e47a3b2f9"
-      }
+      },
+      "vocabulary_digest": "f6c12c6d4469e68c"
     },
     "adaptation=False|extended=True|named=True": {
       "adaptation": {
@@ -33,128 +37,148 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 2,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "4629575fd5249a9b"
       },
       "train": {
-        "digest": "f4ae7e3e755f1aca",
+        "digest": "1af8c2f089736b30",
         "n_annotations": 4480,
         "n_texts": 1120,
         "n_traits": 4,
         "n_users": 4,
+        "order_digest": "bb1ce0e553a4d612",
         "traits_digest": "3465912e47a3b2f9"
-      }
+      },
+      "vocabulary_digest": "f6c12c6d4469e68c"
     },
     "adaptation=test|extended=False|named=False": {
       "adaptation": {
-        "digest": "cf45e3b386b3f7b1",
+        "digest": "1e932dbd3ff5132a",
         "n_annotations": 32,
         "n_texts": 16,
         "n_traits": 0,
         "n_users": 2,
+        "order_digest": "ee7e24839a2959af",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 0,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "cf126fd48c24ad25",
+        "digest": "6e34d5bf2c882a17",
         "n_annotations": 3200,
         "n_texts": 800,
         "n_traits": 0,
         "n_users": 4,
+        "order_digest": "c11ca705cb4f0bb5",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "16b01c2fa0766140"
     },
     "adaptation=test|extended=False|named=True": {
       "adaptation": {
-        "digest": "cf45e3b386b3f7b1",
+        "digest": "1e932dbd3ff5132a",
         "n_annotations": 32,
         "n_texts": 16,
         "n_traits": 2,
         "n_users": 2,
+        "order_digest": "ee7e24839a2959af",
         "traits_digest": "4629575fd5249a9b"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 2,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "4629575fd5249a9b"
       },
       "train": {
-        "digest": "cf126fd48c24ad25",
+        "digest": "6e34d5bf2c882a17",
         "n_annotations": 3200,
         "n_texts": 800,
         "n_traits": 4,
         "n_users": 4,
+        "order_digest": "c11ca705cb4f0bb5",
         "traits_digest": "3465912e47a3b2f9"
-      }
+      },
+      "vocabulary_digest": "f6c12c6d4469e68c"
     },
     "adaptation=test|extended=True|named=False": {
       "adaptation": {
-        "digest": "cf45e3b386b3f7b1",
+        "digest": "1e932dbd3ff5132a",
         "n_annotations": 32,
         "n_texts": 16,
         "n_traits": 0,
         "n_users": 2,
+        "order_digest": "ee7e24839a2959af",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 0,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "f4ae7e3e755f1aca",
+        "digest": "1af8c2f089736b30",
         "n_annotations": 4480,
         "n_texts": 1120,
         "n_traits": 0,
         "n_users": 4,
+        "order_digest": "bb1ce0e553a4d612",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "16b01c2fa0766140"
     },
     "adaptation=test|extended=True|named=True": {
       "adaptation": {
-        "digest": "cf45e3b386b3f7b1",
+        "digest": "1e932dbd3ff5132a",
         "n_annotations": 32,
         "n_texts": 16,
         "n_traits": 2,
         "n_users": 2,
+        "order_digest": "ee7e24839a2959af",
         "traits_digest": "4629575fd5249a9b"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 2,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "4629575fd5249a9b"
       },
       "train": {
-        "digest": "f4ae7e3e755f1aca",
+        "digest": "1af8c2f089736b30",
         "n_annotations": 4480,
         "n_texts": 1120,
         "n_traits": 4,
         "n_users": 4,
+        "order_digest": "bb1ce0e553a4d612",
         "traits_digest": "3465912e47a3b2f9"
-      }
+      },
+      "vocabulary_digest": "f6c12c6d4469e68c"
     },
     "adaptation=train|extended=False|named=False": {
       "adaptation": {
@@ -163,24 +187,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 0,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "514db5ae8e78cc7a",
+        "digest": "c1879d3674fa62f9",
         "n_annotations": 3232,
         "n_texts": 800,
         "n_traits": 0,
         "n_users": 6,
+        "order_digest": "bef89ccf7212240f",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "16b01c2fa0766140"
     },
     "adaptation=train|extended=False|named=True": {
       "adaptation": {
@@ -189,24 +217,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 2,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "4629575fd5249a9b"
       },
       "train": {
-        "digest": "514db5ae8e78cc7a",
+        "digest": "c1879d3674fa62f9",
         "n_annotations": 3232,
         "n_texts": 800,
         "n_traits": 6,
         "n_users": 6,
+        "order_digest": "bef89ccf7212240f",
         "traits_digest": "b6edfddcbc3af752"
-      }
+      },
+      "vocabulary_digest": "f6c12c6d4469e68c"
     },
     "adaptation=train|extended=True|named=False": {
       "adaptation": {
@@ -215,24 +247,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 0,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "a8fa09f4a640c20b",
+        "digest": "c46c18370bd60969",
         "n_annotations": 4512,
         "n_texts": 1120,
         "n_traits": 0,
         "n_users": 6,
+        "order_digest": "e9bc6ee05ce0b1d2",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "16b01c2fa0766140"
     },
     "adaptation=train|extended=True|named=True": {
       "adaptation": {
@@ -241,24 +277,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a7fbb3eac971a205",
+        "digest": "34941a92ec082cb9",
         "n_annotations": 640,
         "n_texts": 320,
         "n_traits": 2,
         "n_users": 2,
+        "order_digest": "7f8bf164a0220828",
         "traits_digest": "4629575fd5249a9b"
       },
       "train": {
-        "digest": "a8fa09f4a640c20b",
+        "digest": "c46c18370bd60969",
         "n_annotations": 4512,
         "n_texts": 1120,
         "n_traits": 6,
         "n_users": 6,
+        "order_digest": "e9bc6ee05ce0b1d2",
         "traits_digest": "b6edfddcbc3af752"
-      }
+      },
+      "vocabulary_digest": "f6c12c6d4469e68c"
     }
   },
   "DICES": {
@@ -269,24 +309,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 96,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "07d57935a7f7a2c1"
       },
       "train": {
-        "digest": "939c0f28c0743b02",
+        "digest": "ad097ca98e91c28f",
         "n_annotations": 23760,
         "n_texts": 240,
         "n_traits": 396,
         "n_users": 99,
+        "order_digest": "5a0a8667b1385de7",
         "traits_digest": "b1c34cc887573e81"
-      }
+      },
+      "vocabulary_digest": "52d85840f3df79de"
     },
     "adaptation=False|extended=True|named=True": {
       "adaptation": {
@@ -295,128 +339,148 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 96,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "07d57935a7f7a2c1"
       },
       "train": {
-        "digest": "572e39ba3160ee1f",
+        "digest": "54d92de5cef8ea4f",
         "n_annotations": 34650,
         "n_texts": 350,
         "n_traits": 396,
         "n_users": 99,
+        "order_digest": "c184eba54aef55a4",
         "traits_digest": "b1c34cc887573e81"
-      }
+      },
+      "vocabulary_digest": "52d85840f3df79de"
     },
     "adaptation=test|extended=False|named=False": {
       "adaptation": {
-        "digest": "ea459add17df4157",
+        "digest": "7304c4b3cfac06fd",
         "n_annotations": 5760,
         "n_texts": 240,
         "n_traits": 0,
         "n_users": 24,
+        "order_digest": "9e028625704b85dc",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 0,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "939c0f28c0743b02",
+        "digest": "ad097ca98e91c28f",
         "n_annotations": 23760,
         "n_texts": 240,
         "n_traits": 0,
         "n_users": 99,
+        "order_digest": "5a0a8667b1385de7",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "48f00a7c61b4eb04"
     },
     "adaptation=test|extended=False|named=True": {
       "adaptation": {
-        "digest": "ea459add17df4157",
+        "digest": "7304c4b3cfac06fd",
         "n_annotations": 5760,
         "n_texts": 240,
         "n_traits": 96,
         "n_users": 24,
+        "order_digest": "9e028625704b85dc",
         "traits_digest": "07d57935a7f7a2c1"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 96,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "07d57935a7f7a2c1"
       },
       "train": {
-        "digest": "939c0f28c0743b02",
+        "digest": "ad097ca98e91c28f",
         "n_annotations": 23760,
         "n_texts": 240,
         "n_traits": 396,
         "n_users": 99,
+        "order_digest": "5a0a8667b1385de7",
         "traits_digest": "b1c34cc887573e81"
-      }
+      },
+      "vocabulary_digest": "52d85840f3df79de"
     },
     "adaptation=test|extended=True|named=False": {
       "adaptation": {
-        "digest": "ea459add17df4157",
+        "digest": "7304c4b3cfac06fd",
         "n_annotations": 5760,
         "n_texts": 240,
         "n_traits": 0,
         "n_users": 24,
+        "order_digest": "9e028625704b85dc",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 0,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "572e39ba3160ee1f",
+        "digest": "54d92de5cef8ea4f",
         "n_annotations": 34650,
         "n_texts": 350,
         "n_traits": 0,
         "n_users": 99,
+        "order_digest": "c184eba54aef55a4",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "48f00a7c61b4eb04"
     },
     "adaptation=test|extended=True|named=True": {
       "adaptation": {
-        "digest": "ea459add17df4157",
+        "digest": "7304c4b3cfac06fd",
         "n_annotations": 5760,
         "n_texts": 240,
         "n_traits": 96,
         "n_users": 24,
+        "order_digest": "9e028625704b85dc",
         "traits_digest": "07d57935a7f7a2c1"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 96,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "07d57935a7f7a2c1"
       },
       "train": {
-        "digest": "572e39ba3160ee1f",
+        "digest": "54d92de5cef8ea4f",
         "n_annotations": 34650,
         "n_texts": 350,
         "n_traits": 396,
         "n_users": 99,
+        "order_digest": "c184eba54aef55a4",
         "traits_digest": "b1c34cc887573e81"
-      }
+      },
+      "vocabulary_digest": "52d85840f3df79de"
     },
     "adaptation=train|extended=False|named=False": {
       "adaptation": {
@@ -425,24 +489,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 0,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "47ec54df3320109d",
+        "digest": "791c3e6b8b8a1918",
         "n_annotations": 29520,
         "n_texts": 240,
         "n_traits": 0,
         "n_users": 123,
+        "order_digest": "8a6617e66cf4f732",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "48f00a7c61b4eb04"
     },
     "adaptation=train|extended=False|named=True": {
       "adaptation": {
@@ -451,24 +519,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 96,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "07d57935a7f7a2c1"
       },
       "train": {
-        "digest": "47ec54df3320109d",
+        "digest": "791c3e6b8b8a1918",
         "n_annotations": 29520,
         "n_texts": 240,
         "n_traits": 492,
         "n_users": 123,
+        "order_digest": "8a6617e66cf4f732",
         "traits_digest": "73a28cde60b4bda0"
-      }
+      },
+      "vocabulary_digest": "52d85840f3df79de"
     },
     "adaptation=train|extended=True|named=False": {
       "adaptation": {
@@ -477,24 +549,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 0,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "9e355df3d70922eb",
+        "digest": "03fb8cce226155e4",
         "n_annotations": 40410,
         "n_texts": 350,
         "n_traits": 0,
         "n_users": 123,
+        "order_digest": "d7cae8fd736c7129",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "48f00a7c61b4eb04"
     },
     "adaptation=train|extended=True|named=True": {
       "adaptation": {
@@ -503,24 +579,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "cc90f2e2e0984605",
+        "digest": "8744e215e1f6b02b",
         "n_annotations": 2640,
         "n_texts": 110,
         "n_traits": 96,
         "n_users": 24,
+        "order_digest": "19b5325d92b23d29",
         "traits_digest": "07d57935a7f7a2c1"
       },
       "train": {
-        "digest": "9e355df3d70922eb",
+        "digest": "03fb8cce226155e4",
         "n_annotations": 40410,
         "n_texts": 350,
         "n_traits": 492,
         "n_users": 123,
+        "order_digest": "d7cae8fd736c7129",
         "traits_digest": "73a28cde60b4bda0"
-      }
+      },
+      "vocabulary_digest": "52d85840f3df79de"
     }
   },
   "EPIC": {
@@ -531,24 +611,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 42,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "092f0adc8b54b6a4"
       },
       "train": {
-        "digest": "ee5e93a736a47014",
+        "digest": "ed23eb0230c4089d",
         "n_annotations": 5092,
         "n_texts": 1161,
         "n_traits": 180,
         "n_users": 60,
+        "order_digest": "a00717e5f8d81eb4",
         "traits_digest": "bda3951780e62b95"
-      }
+      },
+      "vocabulary_digest": "5f45f18f753164f4"
     },
     "adaptation=False|extended=True|named=True": {
       "adaptation": {
@@ -557,128 +641,148 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 42,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "092f0adc8b54b6a4"
       },
       "train": {
-        "digest": "ae148a5fff8d018c",
+        "digest": "c0779c978cc6d319",
         "n_annotations": 11404,
         "n_texts": 2998,
         "n_traits": 180,
         "n_users": 60,
+        "order_digest": "def0f791e4d98ee3",
         "traits_digest": "bda3951780e62b95"
-      }
+      },
+      "vocabulary_digest": "5f45f18f753164f4"
     },
     "adaptation=test|extended=False|named=False": {
       "adaptation": {
-        "digest": "d13484b3baf13c07",
+        "digest": "4eb4b6453a2fdf42",
         "n_annotations": 224,
         "n_texts": 133,
         "n_traits": 0,
         "n_users": 14,
+        "order_digest": "c9ed0ab6e697e1ad",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 0,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "ee5e93a736a47014",
+        "digest": "ed23eb0230c4089d",
         "n_annotations": 5092,
         "n_texts": 1161,
         "n_traits": 0,
         "n_users": 60,
+        "order_digest": "a00717e5f8d81eb4",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "7040430f88f44097"
     },
     "adaptation=test|extended=False|named=True": {
       "adaptation": {
-        "digest": "d13484b3baf13c07",
+        "digest": "4eb4b6453a2fdf42",
         "n_annotations": 224,
         "n_texts": 133,
         "n_traits": 42,
         "n_users": 14,
+        "order_digest": "c9ed0ab6e697e1ad",
         "traits_digest": "092f0adc8b54b6a4"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 42,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "092f0adc8b54b6a4"
       },
       "train": {
-        "digest": "ee5e93a736a47014",
+        "digest": "ed23eb0230c4089d",
         "n_annotations": 5092,
         "n_texts": 1161,
         "n_traits": 180,
         "n_users": 60,
+        "order_digest": "a00717e5f8d81eb4",
         "traits_digest": "bda3951780e62b95"
-      }
+      },
+      "vocabulary_digest": "5f45f18f753164f4"
     },
     "adaptation=test|extended=True|named=False": {
       "adaptation": {
-        "digest": "d13484b3baf13c07",
+        "digest": "4eb4b6453a2fdf42",
         "n_annotations": 224,
         "n_texts": 133,
         "n_traits": 0,
         "n_users": 14,
+        "order_digest": "c9ed0ab6e697e1ad",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 0,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "ae148a5fff8d018c",
+        "digest": "c0779c978cc6d319",
         "n_annotations": 11404,
         "n_texts": 2998,
         "n_traits": 0,
         "n_users": 60,
+        "order_digest": "def0f791e4d98ee3",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "7040430f88f44097"
     },
     "adaptation=test|extended=True|named=True": {
       "adaptation": {
-        "digest": "d13484b3baf13c07",
+        "digest": "4eb4b6453a2fdf42",
         "n_annotations": 224,
         "n_texts": 133,
         "n_traits": 42,
         "n_users": 14,
+        "order_digest": "c9ed0ab6e697e1ad",
         "traits_digest": "092f0adc8b54b6a4"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 42,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "092f0adc8b54b6a4"
       },
       "train": {
-        "digest": "ae148a5fff8d018c",
+        "digest": "c0779c978cc6d319",
         "n_annotations": 11404,
         "n_texts": 2998,
         "n_traits": 180,
         "n_users": 60,
+        "order_digest": "def0f791e4d98ee3",
         "traits_digest": "bda3951780e62b95"
-      }
+      },
+      "vocabulary_digest": "5f45f18f753164f4"
     },
     "adaptation=train|extended=False|named=False": {
       "adaptation": {
@@ -687,24 +791,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 0,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "4789d602c17916f3",
+        "digest": "4817c50d3e1b0b59",
         "n_annotations": 5316,
         "n_texts": 1161,
         "n_traits": 0,
         "n_users": 74,
+        "order_digest": "7930a61e7aaf0184",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "7040430f88f44097"
     },
     "adaptation=train|extended=False|named=True": {
       "adaptation": {
@@ -713,24 +821,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 42,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "092f0adc8b54b6a4"
       },
       "train": {
-        "digest": "4789d602c17916f3",
+        "digest": "4817c50d3e1b0b59",
         "n_annotations": 5316,
         "n_texts": 1161,
         "n_traits": 222,
         "n_users": 74,
+        "order_digest": "7930a61e7aaf0184",
         "traits_digest": "f379a6232c29f2f9"
-      }
+      },
+      "vocabulary_digest": "5f45f18f753164f4"
     },
     "adaptation=train|extended=True|named=False": {
       "adaptation": {
@@ -739,24 +851,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 0,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "fd96adbab001b132",
+        "digest": "a7ff0b6e201e9f5b",
         "n_annotations": 11628,
         "n_texts": 2998,
         "n_traits": 0,
         "n_users": 74,
+        "order_digest": "cbe6e0723be13676",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "7040430f88f44097"
     },
     "adaptation=train|extended=True|named=True": {
       "adaptation": {
@@ -765,78 +881,90 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "1f7766375ec3e303",
+        "digest": "b5d53b68f85a7d26",
         "n_annotations": 2544,
         "n_texts": 1839,
         "n_traits": 42,
         "n_users": 14,
+        "order_digest": "408379c792547fc4",
         "traits_digest": "092f0adc8b54b6a4"
       },
       "train": {
-        "digest": "fd96adbab001b132",
+        "digest": "a7ff0b6e201e9f5b",
         "n_annotations": 11628,
         "n_texts": 2998,
         "n_traits": 222,
         "n_users": 74,
+        "order_digest": "cbe6e0723be13676",
         "traits_digest": "f379a6232c29f2f9"
-      }
+      },
+      "vocabulary_digest": "5f45f18f753164f4"
     }
   },
   "MD": {
     "adaptation=test|extended=False|named=False": {
       "adaptation": {
-        "digest": "3e88472a38ec8547",
+        "digest": "e410c9793726ff9d",
         "n_annotations": 981,
         "n_texts": 553,
         "n_traits": 0,
         "n_users": 163,
+        "order_digest": "86131922fca2c8da",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a71d41a979dc6027",
+        "digest": "27cd445727fba0e4",
         "n_annotations": 10283,
         "n_texts": 7126,
         "n_traits": 0,
         "n_users": 163,
+        "order_digest": "27710ee0276223f3",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "3c5eb6e59c771606",
+        "digest": "b3899f725e3ff54e",
         "n_annotations": 17154,
         "n_texts": 3627,
         "n_traits": 0,
         "n_users": 656,
+        "order_digest": "e59906775006f7f8",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "df1e282ba6ed896b"
     },
     "adaptation=test|extended=True|named=False": {
       "adaptation": {
-        "digest": "3e88472a38ec8547",
+        "digest": "e410c9793726ff9d",
         "n_annotations": 981,
         "n_texts": 553,
         "n_traits": 0,
         "n_users": 163,
+        "order_digest": "86131922fca2c8da",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a71d41a979dc6027",
+        "digest": "27cd445727fba0e4",
         "n_annotations": 10283,
         "n_texts": 7126,
         "n_traits": 0,
         "n_users": 163,
+        "order_digest": "27710ee0276223f3",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "33ca651b054c1509",
+        "digest": "a80a947d94cf2f7d",
         "n_annotations": 42500,
         "n_texts": 10753,
         "n_traits": 0,
         "n_users": 656,
+        "order_digest": "12ceeae019f1c016",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "df1e282ba6ed896b"
     },
     "adaptation=train|extended=False|named=False": {
       "adaptation": {
@@ -845,24 +973,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a71d41a979dc6027",
+        "digest": "27cd445727fba0e4",
         "n_annotations": 10283,
         "n_texts": 7126,
         "n_traits": 0,
         "n_users": 163,
+        "order_digest": "27710ee0276223f3",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "fa4d9d080679ca76",
+        "digest": "f265b690ceeb17b6",
         "n_annotations": 18135,
         "n_texts": 3627,
         "n_traits": 0,
         "n_users": 819,
+        "order_digest": "506b05d07467dc04",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "df1e282ba6ed896b"
     },
     "adaptation=train|extended=True|named=False": {
       "adaptation": {
@@ -871,24 +1003,28 @@
         "n_texts": 0,
         "n_traits": 0,
         "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
         "traits_digest": "1f18d650d205d71d"
       },
       "test": {
-        "digest": "a71d41a979dc6027",
+        "digest": "27cd445727fba0e4",
         "n_annotations": 10283,
         "n_texts": 7126,
         "n_traits": 0,
         "n_users": 163,
+        "order_digest": "27710ee0276223f3",
         "traits_digest": "1f18d650d205d71d"
       },
       "train": {
-        "digest": "9356ac10838ed227",
+        "digest": "a9cb98fbf8782466",
         "n_annotations": 43481,
         "n_texts": 10753,
         "n_traits": 0,
         "n_users": 819,
+        "order_digest": "7ee7c846fbf532c6",
         "traits_digest": "1f18d650d205d71d"
-      }
+      },
+      "vocabulary_digest": "df1e282ba6ed896b"
     }
   }
 }
