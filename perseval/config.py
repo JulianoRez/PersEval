@@ -21,6 +21,10 @@ dataset_specific_splits = {
     "MD":{
         "user_based_split_percentage" : 0.2,
         "text_based_split_percentage" : 0.05,  
+    },
+    "TAS": {
+        "user_based_split_percentage" : 0.2,
+        "text_based_split_percentage" : 0.05,
     }
 }
 

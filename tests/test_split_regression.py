@@ -13,7 +13,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-from perseval.data import Epic, Brexit, DICES, MHS, MD
+from perseval.data import Epic, Brexit, DICES, MHS, MD, TAS
 
 BASELINE_PATH = Path(__file__).parent / "baselines" / "splits.json"
 
@@ -23,9 +23,10 @@ DATASET_FACTORIES = {
     "DICES": lambda: DICES("Q2_harmful_content_overall"),
     "MD": lambda: MD("offensiveness"),
     "MHS": lambda: MHS("hateful"),
+    "TAS": lambda: TAS("hate_speech"),
 }
 
-DEFAULT_DATASETS = ["EPIC", "BREXIT", "DICES", "MD"]
+DEFAULT_DATASETS = ["EPIC", "BREXIT", "DICES", "MD", "TAS"]
 
 SPLIT_NAMES = ("train", "adaptation", "test")
 

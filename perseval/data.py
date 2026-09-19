@@ -526,3 +526,49 @@ class MD(PerspectivistDataset):
     def read_traits(self, row):
         raise Exception("Invalid parameter configuration. \
                             This dataset does not contain any information about the annotators.")
+
+
+@dataclass
+class TAS(PerspectivistDataset):
+    user_column = "annotator_id"
+    text_column = "tweet_id"
+
+    URL = "https://huggingface.co/datasets/soda-lmu/tweet-annotation-sensitivity-2/resolve/main/publication_dataset.csv"
+    EDUCATION = {1: "educ-low", 2: "educ-low", 3: "educ-low", 4: "educ-high", 5: "educ-high", 6: "educ-high"}
+    PARTY = {1: "Republican", 2: "Democrat", 3: "Independent"}
+
+    def __init__(self, label="hate_speech"):
+        super(TAS, self).__init__()
+        self.name = "TAS"
+        self.label = label
+        dataset = load_dataset("csv", data_files=self.URL)
+        self.dataset = dataset["train"].filter(
+            lambda x: x["hate_speech"] is not None and x["offensive_language"] is not None)
+        for name in ["hate_speech", "offensive_language"]:
+            self.labels[name] = set()
+
+    def read_text(self, row):
+        return {"tweet": row['tweet_hashed']}
+
+    def read_labels(self, row):
+        return {name: int(row[name]) for name in self.labels}
+
+    def read_traits(self, row):
+        traits = {"Condition": row['condition']}
+        if row['age'] is not None:
+            traits["Generation"] = self.__convert_age(int(row['age']))
+        if row['education'] is not None:
+            traits["Education"] = self.EDUCATION[int(row['education'])]
+        if row['party_affiliation'] is not None:
+            traits["Party"] = self.PARTY[int(row['party_affiliation'])]
+        return traits
+
+    def __convert_age(self, age):
+        if age >= 58:
+            return "Boomer"
+        elif age >= 42:
+            return "GenX"
+        elif age >= 26:
+            return "GenY"
+        else:
+            return "GenZ"

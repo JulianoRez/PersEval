@@ -1026,5 +1026,307 @@
       },
       "vocabulary_digest": "df1e282ba6ed896b"
     }
+  },
+  "TAS": {
+    "adaptation=False|extended=False|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 1401,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "b135cde2e2051ece"
+      },
+      "train": {
+        "digest": "c9035d704d7aeb32",
+        "n_annotations": 21162,
+        "n_texts": 750,
+        "n_traits": 5649,
+        "n_users": 1446,
+        "order_digest": "0a97743fe301e70a",
+        "traits_digest": "aeedffbe6c2945a4"
+      },
+      "vocabulary_digest": "bd77c7112b55b819"
+    },
+    "adaptation=False|extended=True|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 1401,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "b135cde2e2051ece"
+      },
+      "train": {
+        "digest": "e75de493a47cfdd2",
+        "n_annotations": 70591,
+        "n_texts": 3050,
+        "n_traits": 5649,
+        "n_users": 1446,
+        "order_digest": "0a93f5f862f7738b",
+        "traits_digest": "aeedffbe6c2945a4"
+      },
+      "vocabulary_digest": "bd77c7112b55b819"
+    },
+    "adaptation=test|extended=False|named=False": {
+      "adaptation": {
+        "digest": "eb6645b819041a9c",
+        "n_annotations": 5833,
+        "n_texts": 750,
+        "n_traits": 0,
+        "n_users": 361,
+        "order_digest": "2cb331a96c15a3dc",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 0,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "c9035d704d7aeb32",
+        "n_annotations": 21162,
+        "n_texts": 750,
+        "n_traits": 0,
+        "n_users": 1446,
+        "order_digest": "0a97743fe301e70a",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "vocabulary_digest": "d15f542f6584dd61"
+    },
+    "adaptation=test|extended=False|named=True": {
+      "adaptation": {
+        "digest": "eb6645b819041a9c",
+        "n_annotations": 5833,
+        "n_texts": 750,
+        "n_traits": 1401,
+        "n_users": 361,
+        "order_digest": "2cb331a96c15a3dc",
+        "traits_digest": "b135cde2e2051ece"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 1401,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "b135cde2e2051ece"
+      },
+      "train": {
+        "digest": "c9035d704d7aeb32",
+        "n_annotations": 21162,
+        "n_texts": 750,
+        "n_traits": 5649,
+        "n_users": 1446,
+        "order_digest": "0a97743fe301e70a",
+        "traits_digest": "aeedffbe6c2945a4"
+      },
+      "vocabulary_digest": "bd77c7112b55b819"
+    },
+    "adaptation=test|extended=True|named=False": {
+      "adaptation": {
+        "digest": "eb6645b819041a9c",
+        "n_annotations": 5833,
+        "n_texts": 750,
+        "n_traits": 0,
+        "n_users": 361,
+        "order_digest": "2cb331a96c15a3dc",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 0,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "e75de493a47cfdd2",
+        "n_annotations": 70591,
+        "n_texts": 3050,
+        "n_traits": 0,
+        "n_users": 1446,
+        "order_digest": "0a93f5f862f7738b",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "vocabulary_digest": "d15f542f6584dd61"
+    },
+    "adaptation=test|extended=True|named=True": {
+      "adaptation": {
+        "digest": "eb6645b819041a9c",
+        "n_annotations": 5833,
+        "n_texts": 750,
+        "n_traits": 1401,
+        "n_users": 361,
+        "order_digest": "2cb331a96c15a3dc",
+        "traits_digest": "b135cde2e2051ece"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 1401,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "b135cde2e2051ece"
+      },
+      "train": {
+        "digest": "e75de493a47cfdd2",
+        "n_annotations": 70591,
+        "n_texts": 3050,
+        "n_traits": 5649,
+        "n_users": 1446,
+        "order_digest": "0a93f5f862f7738b",
+        "traits_digest": "aeedffbe6c2945a4"
+      },
+      "vocabulary_digest": "bd77c7112b55b819"
+    },
+    "adaptation=train|extended=False|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 0,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "482540eadb66fd32",
+        "n_annotations": 26995,
+        "n_texts": 750,
+        "n_traits": 0,
+        "n_users": 1807,
+        "order_digest": "cd9d29c5fe01db93",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "vocabulary_digest": "d15f542f6584dd61"
+    },
+    "adaptation=train|extended=False|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 1401,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "b135cde2e2051ece"
+      },
+      "train": {
+        "digest": "482540eadb66fd32",
+        "n_annotations": 26995,
+        "n_texts": 750,
+        "n_traits": 7050,
+        "n_users": 1807,
+        "order_digest": "cd9d29c5fe01db93",
+        "traits_digest": "3c6c4ea4ca7c96f2"
+      },
+      "vocabulary_digest": "bd77c7112b55b819"
+    },
+    "adaptation=train|extended=True|named=False": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 0,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "train": {
+        "digest": "9489049d281415d6",
+        "n_annotations": 76424,
+        "n_texts": 3050,
+        "n_traits": 0,
+        "n_users": 1807,
+        "order_digest": "d3bed96e994cc3d2",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "vocabulary_digest": "d15f542f6584dd61"
+    },
+    "adaptation=train|extended=True|named=True": {
+      "adaptation": {
+        "digest": "1feb62489b47cb9a",
+        "n_annotations": 0,
+        "n_texts": 0,
+        "n_traits": 0,
+        "n_users": 0,
+        "order_digest": "d4ba2394ffbd157c",
+        "traits_digest": "1f18d650d205d71d"
+      },
+      "test": {
+        "digest": "5bacf66bd82c5efc",
+        "n_annotations": 11714,
+        "n_texts": 2300,
+        "n_traits": 1401,
+        "n_users": 361,
+        "order_digest": "5dfe888d7a4aa3dd",
+        "traits_digest": "b135cde2e2051ece"
+      },
+      "train": {
+        "digest": "9489049d281415d6",
+        "n_annotations": 76424,
+        "n_texts": 3050,
+        "n_traits": 7050,
+        "n_users": 1807,
+        "order_digest": "d3bed96e994cc3d2",
+        "traits_digest": "3c6c4ea4ca7c96f2"
+      },
+      "vocabulary_digest": "bd77c7112b55b819"
+    }
   }
 }
