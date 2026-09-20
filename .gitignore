@@ -51,6 +51,15 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# Artifacts 
+/data/
+/data_LaMP/
+/predictions/
+/predictions_*/
+/results/
+/qualitative_analysis/results_*/
+/wandb/
+
 # Translations
 *.mo
 *.pot
