@@ -5,11 +5,6 @@ output_root = Path(
     os.environ.get("PERSEVAL_OUTPUT_DIR", "./outputs")
 ).expanduser()
 
-prediction_dir = str(output_root / "predictions")
-prediction_dir_llama = str(output_root / "predictions_llama")
-prediction_dir_mixtral = str(output_root / "predictions_mixtral")
-data_lamp_dir = str(output_root / "data_LaMP")
-
 seed = 42
 
 dataset_specific_splits = {
