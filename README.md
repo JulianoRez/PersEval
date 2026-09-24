@@ -13,10 +13,17 @@ We demonstrate PersEval's capabilities through experiments with both Encoder-bas
 By considering global, text-, trait- and user-level evaluation metrics, we show that PersEval is a powerful tool for examining how models are influenced by user-specific information and identifying the biases this information may introduce. 
 
 
-
 ## ⚙️ Framework
 
 ![](<./framework_diagram.png>)
+
+### Installation
+
+Install PersEval from the repository with:
+
+```bash
+python -m pip install .
+```
 
 ### Named or unnamed classification
 Users can be represented in two ways:
@@ -25,38 +32,33 @@ Users can be represented in two ways:
 
 - **Named classification** — by a set of explicit metadata (e.g., traits).
 
-To enable named classification, use the --named flag when running the script:
+To enable named classification when generating the dataset splits, set `named=True`:
+```python
+perspectivist_dataset.get_splits(user_adaptation="train", extended=False, named=True)
 ```
-python main.py --named
-```
-If the flag is omitted, the script defaults to unnamed classification.
-
+Set `named=False` for unnamed classification.
 
 ### Adaptation set 
 Mirroring real-world scenarios, we assume that the annotators who provided the bulk of the annotations to train the system, and the users for which the system is tested, are disjoint. 
 
 When explicit knowledge about the users is available (e.g. metadata), a model can attempt to learn biases toward such characteristics, without knowing any preference of the unkown users.
  
-```
-python main.py --named --adaptation false
+```python
+perspectivist_dataset.get_splits(user_adaptation=False, extended=False, named=True)
 ```
 
 However, we also assume two adaptation scenarios where few labels from test users are available: 
 
 **Adaptation at training time**: we assume minimal annotation from users has been obtained before training the system. A few annotations from test users are thus included in the training split.
-```
-python main.py --adaptation train
-```
-```
-python main.py --named --adaptation train  
+```python
+perspectivist_dataset.get_splits(user_adaptation="train", extended=False, named=False)
+perspectivist_dataset.get_splits(user_adaptation="train", extended=False, named=True)
 ```
 
 **Adaptation at inference time**: we assume an already trained system has to be adapted to new users. A few test users instances can thus be used to adapt an existing model.
-```
-python main.py --adaptation test
-```
-```
-python main.py --named --adaptation test 
+```python
+perspectivist_dataset.get_splits(user_adaptation="test", extended=False, named=False)
+perspectivist_dataset.get_splits(user_adaptation="test", extended=False, named=True)
 ```
 
 ### Training set 
@@ -64,8 +66,8 @@ In the default setting, textual examples in the test split are disjoint from tho
 
 
 We also provide a variant for which texts that are also found in test instances, but annotated by different users, can be included in the trainig split.
-```
-python main.py --extended
+```python
+perspectivist_dataset.get_splits(user_adaptation="train", extended=True, named=False)
 ```
 
 ### Test set
@@ -77,7 +79,6 @@ The difference between the task variants manifests in different training splits 
 The library comes with five datasets. 
 
 
-
 | Dataset  | Reference | Task| #Annotators | Metadata | 
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 | Brexit  | [Akhtar et al. 2021](https://arxiv.org/abs/2106.15896)  | Abusive language | 6 | Target an control group | 
@@ -86,14 +87,17 @@ The library comes with five datasets.
 | MD-Agreement |[Leonaredlli et al. 2022](https://aclanthology.org/2023.semeval-1.314/)  | Offensiveness | 819 | --- | 
 |Dices | [Aroyo et al. 2024](https://proceedings.neurips.cc/paper_files/paper/2023/hash/a74b697bce4cac6c91896372abaa8863-Abstract-Datasets_and_Benchmarks.html)  | AI Safety | 123 | Gender, Age/Generation, Education, Ethinicity | 
 
-BREXIT, EPIC and MHS are directly loaded from huggingface, while DICES and MD-Agreement are loaded form the "./data" folder.
+BREXIT, EPIC and MHS are directly loaded from Hugging Face, while DICES and MD-Agreement are loaded from the directory configured through the `PERSEVAL_DATA_DIR` environment variable.
 
 Other than the dataset name, it is important to also specify the corresponding label.
 
+```python
+from perseval.data import DICES
+
+perspectivist_dataset = DICES("Q2_harmful_content_overall")
 ```
-python main.py --dataset-name DICES --label Q2_harmful_content_overall
-```
-Options for labels are listed below, as well as in the main.py file
+Options for labels are listed below:
+
 ```
 # EPIC   -> ["irony"]
 # BREXIT -> ["hs", "offensiveness", "aggressiveness", "stereotype"]
@@ -109,39 +113,24 @@ We require models to output a **label** for each **<user, text> tuple**. Startin
 - text-level: computed individually for each text in the test set and then averaged; 
 - trait-level: computed for each trait and then averaged for each dimension.
 
-
 ## 🤖 Baseline Models 
+The optional baseline implementations are available in the `perseval.baselines` submodule.
+
 ### Encoder-based 
 We fine-tuned RoBERTa, customized implementing Focal Loss.
 
 We added annotators' identifiers and their traits to the text embedding as a special token. The model input thus concatenates the annotator id, a special token for each of the annotator's traits, and the input text to classify. 
 The model is then trained with a classification head to predict the binary label.
 
-```
-python main.py --model-name roberta-base --type encoder
-```
-
 ### Decoder-based 
 We chose open-source models of medium size: Mixtral-8 7B and Llama-3.1 8B, both instruction tuned. We considered three possible settings: 
 
 **Base zero**: we prompt the models to classify the test set examples, with no additional information.
 
-```
-python main.py --model-name meta-llama/Meta-Llama-3.1-8B-Instruct --type llm
-```
-
 **Perspective**: we ask the models to impersonate each user’s trait. We use this variant to test models without adaptation with a named user representation. We prompt the model for each available user trait.
-
-```
-python main.py --named --model-name meta-llama/Meta-Llama-3.1-8B-Instruct --type llm
-```
 
 **In-Prompt Augmentation** We reproduced
  [Salemi et al. (2024)](https://aclanthology.org/2024.acl-long.399/)’s approach,  prompting the model with user-specific input selected via retrieval augmentation. We used this approach both giving information about the user’s trait value (Named with Adaptation-T) and without providing demographic information. 
-
-```
-pyton main.py --model-name meta-llama/Meta-Llama-3.1-8B-Instruct --type LaMP --context
-```
 
 ## 🧰 Our setup
 The required dependencies were verified on the following system:
@@ -160,8 +149,6 @@ Representing users through their sociodemographic traits could lead to the risk 
 - Q1: What is the contribution of each trait when ensembling the model’s outputs?
 - Q2: Which demographic trait most significantly impacts the model’s label predictions in the presence of varying annotator characteristics?
 - Q3: How similar is the distribution of models’ predictions to that of the annotators’ chosen labels
-
-Results are placed at the "./qualitative_analysis" folder.
 
 ## Other information
 
