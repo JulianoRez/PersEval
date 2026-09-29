@@ -15,8 +15,44 @@ import datasets
 
 from .. import config
 
+
+def _compute_balanced_class_weights(labels, num_labels):
+    """Return one balanced weight for every model label.
+
+    Compute the weights from plain annotation values instead of a formatted
+    Hugging Face Dataset column.
+    """
+    labels = np.asarray(labels, dtype=np.int64)
+    classes = np.arange(num_labels, dtype=np.int64)
+
+    if labels.size == 0:
+        raise ValueError("Cannot compute class weights from an empty training set")
+
+    unexpected = np.setdiff1d(np.unique(labels), classes)
+    if unexpected.size:
+        raise ValueError(
+            f"Training labels {unexpected.tolist()} are outside the model label range "
+            f"0..{num_labels - 1}"
+        )
+
+    missing = np.setdiff1d(classes, np.unique(labels))
+    if missing.size:
+        raise ValueError(
+            f"Training set does not contain model labels {missing.tolist()}"
+        )
+
+    return compute_class_weight(
+        class_weight="balanced",
+        classes=classes,
+        y=labels,
+    ).astype("float32")
+
+
 class PerspectivistEncoder():
     def __init__(self, model_identifier, persp_dataset, label):
+        # Seed before loading the classification head
+        set_seed(config.seed)
+
         self.model_id = model_identifier
         self.training_split = persp_dataset.training_set
         self.adaptation_split = persp_dataset.adaptation_set        
@@ -37,19 +73,26 @@ class PerspectivistEncoder():
 
 
     def train(self):
+        # Seed both that initialization and the subsequent training stage
+        set_seed(config.seed)
         self.__add_special_tokens_to_tokenizer()
         set_seed(config.seed)
         data = {"train" : self.__generate_data(self.training_split)[0]}   
-        # computer class weight (in case labels are unbalanced)        
-        try:
-            class_weights = compute_class_weight(
-                "balanced",
-                classes=np.unique(data["train"]["labels"].float().numpy()),
-                y=data["train"]["labels"].float().numpy()).astype("float32")
-        except Exception as e:
-            print("Unable to balance classes")
-            class_weights = np.array([1, 1]).astype("float32")
 
+        labels = [
+            annotation[self.label]
+            for annotation in self.training_split.annotation.values()
+        ]
+        class_weights = _compute_balanced_class_weights(
+            labels,
+            num_labels=self.model.config.num_labels,
+        )
+        class_counts = np.bincount(
+            np.asarray(labels, dtype=np.int64),
+            minlength=self.model.config.num_labels,
+        )
+        print("Training class counts:", class_counts.tolist())
+        print("Training class weights:", class_weights.tolist())
 
         print('We will use the device:', torch.cuda.get_device_name(0))
         training_args = TrainingArguments(
@@ -140,7 +183,7 @@ class PerspectivistEncoder():
                     for dim in self.traits:
                         for trait in list(self.traits[dim]):
                             new_tokens.add('<{}:{}>'.format(dim, trait))
-        special_tokens_dict['additional_special_tokens'] = list(new_tokens)        
+        special_tokens_dict['additional_special_tokens'] = list(new_tokens)
         self.tokenizer.add_special_tokens(special_tokens_dict)
         self.model.resize_token_embeddings(len(self.tokenizer)) 
 
